@@ -1,0 +1,117 @@
+++++++++++++++++
++  SorterDist  +
+++++++++++++++++
+
+Distributed parallel sorter with Python interface and C++ back end.
+Will implement OpenMP, MPI, cURL and AMQP network protocols.
+
+------
+Python
+------
+
+  - Overview
+  ----------  
+
+  - Current state
+  ----------------
+
+    This serves as a starting point.  What exists is primarily an
+    attempt at establishing an interface.  There are sorting
+    algorithms set out but these are merely toys and test cases to
+    help build an idea.  The interface itself needs work and is
+    subject to change.
+
+  - Modules
+  ----------
+
+    Sorter
+
+    Will be a fast low memory high performance base class implemented
+    in C++ and wrapped with BOOST.  Will provide distributed
+    functionality.
+
+    SorterRecorder
+
+    Provides a broader interface than Sorter.  Currently this keeps
+    track of the permutation returned by get_sorted().  This will also
+    be implemented in C++ and wrapped with BOOST.  In the distributed
+    memory version SorterRecorder will also be able to keep track of
+    where on other nodes data is stored for future sorts of data with
+    the same distribution over the network.  The parallel sort will
+    essentially provide a way to sequence data by a user defined
+    metric that is distributed over a network.
+
+    The interface will provide the ability to access sub-sequences of
+    the sorted version of distributed data.  That is to say a node
+    will be able to shift and select a sub-sequence of the permuted
+    data from across the network.
+
+    SorterNice
+    
+    A low priority parallel sorter that uses network bandwidth as it
+    becomes available and writes the results to fast local disk.
+
+  - To Do:
+  --------
+
+    Generally get rid of the cruft from the interface.  The compFunc
+    has to go.  Not only should this be an overloaded function it will
+    be impossible to take a python defined function in high
+    performance.
+
+---
+C++
+---
+
+  - Overview
+  ----------
+  
+  The C++ will serve as a fast engine for the functionality described
+  in the Python documentation except for SorterNice.  This will be a
+  python only Class.  The library will also be very useful as a stand
+  alone C++ tool.
+
+  - Current state
+  ---------------
+
+  Basic skeleton exists.  Needs work.  
+
+  - Classes
+  ---------
+
+    Sorter
+
+    Pure virtual base class which holds the data and the comparison
+    function.
+
+    SorterThread
+
+    Class for threaded parallel sorting.  Will be a subclass of
+    Sorter.  Will be done with OpenMP pragmas.
+
+    An example of the algorithm exists called threadersorter.py in
+    Python, but the module is completely useless as shared memory
+    programming is essentially not allowed in Python.  The OpenMP
+    pragmas make the solution more elegant in C++.  C++ also provides
+    the STL std::set template which will do the partitioning for us.
+
+    SorterDist
+
+    Class for distributed parallel sorting.  Will be a subclass of
+    Sorter.  Implement with MPI, cURL and amqplib.
+
+    To do:
+    - Keep the vector template through the interface (currently a
+      double).
+    - Add get_algorithms method.   
+    - Add get_comp and set_comp.  
+    - Add SorterRecorder (this will probably be done with inheritance rather
+      than the class composition used in Python.  
+    - Refactor test suite 
+
+
+
+
+Chris Cantalupo
+cmcantalupo@gmail.com
+June 30, 2011

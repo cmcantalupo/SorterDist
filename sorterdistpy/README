@@ -1,0 +1,39 @@
+
+
+class Sorter(object): 
+    """ 
+    Abstract base class that holds a sequence of data and information
+    about how to compare the data.  The comparison function is tricky
+    because it needs to be configured in python, but run quickly in
+    C++.  NumPy's array sorter gives a working model for complex
+    objects.  Eventually this will simply be a wrapper around a C++ 
+    object.  
+    """
+
+class SorterThread(Sorter):
+    """
+    Shared memory sorting for Python users through binding to C++
+    library.  
+    """
+
+class SorterDist(SorterThread):
+    """
+    Distrubed memory sorting abstract base class.  
+    """
+
+class SorterDistMPI(SorterDist):
+    """
+    MPI parallel sorter will be implemented in C++ for tightly 
+    coupled applications.  
+    """
+
+class SorterDistAMQP(SorterDist):
+    """
+    Python class for loosly coupled distributed computing with AMQP
+    library.
+    """
+
+class SorterDistCURL(SorterDist):
+    """
+    Python class for loosly coupled ditributed computing with cURL
+    """
