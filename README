@@ -20,8 +20,6 @@ Overview
   C++ with BOOST bindings for Python.  There will be a native Sorter
   and SorterDist base class in both Python and C++.
 
-  - Classes
-
   - Current state
   ----------------
 
