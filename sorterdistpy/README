@@ -6,8 +6,7 @@ class Sorter(object):
     about how to compare the data.  The comparison function is tricky
     because it needs to be configured in python, but run quickly in
     C++.  NumPy's array sorter gives a working model for complex
-    objects.  Eventually this will simply be a wrapper around a C++ 
-    object.  
+    objects.  Eventually this will be a wrapper around a C++ class.  
     """
 
 class SorterThread(Sorter):
@@ -29,11 +28,11 @@ class SorterDistMPI(SorterDist):
 
 class SorterDistAMQP(SorterDist):
     """
-    Python class for loosly coupled distributed computing with AMQP
+    Python class for loosely coupled distributed computing with AMQP
     library.
     """
 
 class SorterDistCURL(SorterDist):
     """
-    Python class for loosly coupled ditributed computing with cURL
+    Python class for loosely coupled distributed computing with cURL
     """
