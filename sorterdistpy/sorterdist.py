@@ -47,9 +47,9 @@ class SorterThread(Sorter):
         pass
     def sorted_permutation(self):
         pass
-    def sorted_sequence(self, range):
+    def sorted_sequence(self, bounds):
         pass
-    def sorted_sequence_permutation(self, rangeList):
+    def sorted_sequence_permutation(self, bounds):
         pass
 
 class SorterDistSession(object):
