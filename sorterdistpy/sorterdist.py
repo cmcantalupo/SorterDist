@@ -1,48 +1,27 @@
-class SorterArray(object):
-    """
-    Base class for storing data to be sorted.  
-    """
-    def __init__(self, data):
-        pass
-    def set_data(self, data):
-        pass
-    def append_data(self, data):
-        pass
-    def get_data(self):
-        pass
-    def get_range(self, beginIdx, endIdx):
-        pass
-    def del_data(self):
-        pass
-    def del_range(self, beginIndex, endIndex):
-        pass
-    def del_indexed(self, index)
-        pass
-
-
-class Sorter(SorterArray): 
+class Sorter(list): 
     """ 
     Class that defines the basic functionality of SorterDist for
-    serial sorting.
+    serial sorting.  We are deriving from list so sort() is built
+    in.  
     """
     def __init__(self, data=None, comp=None):
-        pass
+        list.__init__(self, data)
+        self._comp = comp
+    def sorted(self):
+        return sorted(self)
+    def sorted_permutation(self):
+        return sorted(range(len(self)), key = self.__getitem__)
+    def sorted_sequence(self, bounds):
+        ss = self.sorted()
+        if type(bounds[0]) == list:
+            result = [ss[ss.index(bb[0]) : ss.index(bb[1]) + 1] for bb in bounds]
+            return result
+        return ss[ss.index(range[0]):ss.index(range[1])]
+    def sorted_sequence_permutation(self, range):
+        raise NotImplementedError()
     def set_comp(self, comp):
-        pass
-    def get_sorted(self):
-        pass
-    def get_sequence(self, beginEl, endEl):
-        pass
-    def get_sequence_fixed(self, beginEl, numEl):
-        pass
-    def get_sequence_multi(self, rangeList):
-        pass
-    def return_permutation(self, doIt=True):
-        pass
-    def store_permuation(self, doIt=True):
-        pass
-    def sort_in_place(self, doIt=True):
-        pass
+        raise NotImplementedError()
+
 
 class Compare(object):
     """
@@ -62,58 +41,69 @@ class SorterThread(Sorter):
     """
     def __init__(self, data=None, comp=None, numThr=1):
         pass
-    def set_num_threads(self):
+    def sort(self):
         pass
-    def get_sorted(self):
+    def sorted(self):
         pass
-    def get_sequence(self, beginEl, endEl):
+    def sorted_permutation(self):
         pass
-    def get_sequence_multi(self, rangeList):
+    def sorted_sequence(self, range):
         pass
-    def get_sequence_fixed(self, beginEl, numEl):
+    def sorted_sequence_permutation(self, rangeList):
         pass
 
-
-class SorterDist(Sorter):
+class SorterDistSession(object):
     """
-    Abstract base class for distributed memory sorting
+    Distributed sort will require setting up a communicator
+    of some kind.  
     """
     def init_session(self, comm, sessionID):
         pass
     def kill_session(self, comm, sessionID):
         pass
-    def get_sorted(self):
-        pass
-    def get_sequence(self, beginEl, endEl)
-        pass
-    def get_sequence_multi(self, rangeList):
-        pass
-    def get_sequence_fixed(self, beginEl, numEl):
+    def attach_sorter(self, sorter):
         pass
 
-class SorterDistMPI(SorterDist):
+class SorterDistMPI(Sorter):
     """
     MPI parallel sorter will be implemented in C++ for tightly coupled
     applications.
     """
     pass
 
-class SorterDistAMQP(SorterDist):
+class SorterDistAMQP(Sorter):
     """
     Python class for loosely coupled distributed computing with AMQP
     library.
     """
     pass
 
-class SorterDistCURL(SorterDist):
+class SorterDistCURL(Sorter):
     """
     Python class for loosely coupled distributed computing with cURL
     """
     pass
 
-class SorterDistNice(SorterDist):
+class SorterDistNice(Sorter):
     """
     Python class for doing sort in background in anticipation of
     needing the result in the future.  The class will stage result on
     local disk and use network only as it becomes available.
     """
+    pass
+
+if __name__ == '__main__':
+    import random
+    dd = range(10)
+    random.shuffle(dd)
+    dd = Sorter(dd)
+    print dd
+    ss = dd.sorted()
+    print ss
+    ii = dd.sorted_permutation()
+    print ii
+    print [dd[i] for i in ii]
+    bounds = [[0,3],[7,9]]
+    print bounds
+    ii = dd.sorted_sequence(bounds)
+    print ii
