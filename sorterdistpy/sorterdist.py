@@ -16,7 +16,7 @@ class Sorter(list):
         if type(bounds[0]) == list:
             result = [ss[ss.index(bb[0]) : ss.index(bb[1]) + 1] for bb in bounds]
             return result
-        return ss[ss.index(range[0]):ss.index(range[1])]
+        return ss[ss.index(bounds[0]) : ss.index(bounds[1]) + 1]
     def sorted_sequence_permutation(self, range):
         raise NotImplementedError()
     def set_comp(self, comp):
@@ -103,7 +103,12 @@ if __name__ == '__main__':
     ii = dd.sorted_permutation()
     print ii
     print [dd[i] for i in ii]
+    bounds = [0,3]
+    print bounds
+    ii = dd.sorted_sequence(bounds)
+    print ii
     bounds = [[0,3],[7,9]]
     print bounds
     ii = dd.sorted_sequence(bounds)
     print ii
+
