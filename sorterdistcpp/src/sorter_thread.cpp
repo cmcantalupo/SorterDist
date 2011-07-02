@@ -1,19 +1,7 @@
 // This is a work in progress.  
 // C.M.Cantalupo 
 
-// The pivot's that will be put into a set.  
-// These need to carry an index of the partition bin and a value 
-// for comparison.  
 namespace SorterDist {
-  template <class T>
-  class Pivot {
-    public:
-      T value;
-      size_t index;
-      bool operator < ( const T& other) const {
-        return value < other.value;
-    }
-  };
 
   // We need to break the input vector into nearly equal size chunks
   // for sorting.  Since we need to sort the result, it needs to be in
@@ -22,15 +10,62 @@ namespace SorterDist {
   // need to be OpenMP private variables so that each thread can sort
   // simultaneously.  For this reason we have to make a copy of the
   // input.
+
+  // Choose pivots from the input vector and put them in a new vector
+  // to be sorted.  Now that they are ordered we can tag them with a 
+  // partition index.  This new tagged T will be a PartitionWall and 
+  // we can build a partition from a vector of PartitionWalls.  The 
+  // partition will be read only so it can be shared between tasks.  
   template <class T>
-  class WorkUnit {
+  class PartitionWall {
+    private:
+      T pivot_;
+      size_t index_;
     public:
-      std::vector<T> chunk; // Thread private vector to be sorted
-      std::vector<T>::iterator resultBegin; // Once it is sorted these
-      std::vector<T>::iterator resultEnd;   // tell where to insert back.  
+      PartitionWall(const T& pivot);
+      bool operator < ( const T& other) const {
+        return pivot_ < other.value;
+      }
+      size_t pivotIndex() const;
+    }
   };
 
-  //
+  template <class T>
+  class Partition {
+    private:
+      std::set<PartitionWall<T>> partition_;
+      std::vector<std::stack><T>> bounded_;
+    public:
+      void fillPartition(std::vector<T>::iterator begin, std::vector<T>::iterator end); //single threaded
+  }
+
+  template <class T>
+  class PartitionGang {
+    private:
+      std::vector<Partition<T>> allPartitions; // we need a partition for each thread.
+    public:
+      void fillPartitions(std::vector<T>::iterator begin, std::vector<T>::iterator end); //spawns threads
+      std::vector<WorkUnit> createWorkUnits(size_t taskID); // spawns threads
+      
+  template <class T>
+    class WorkUnit {
+      public:
+        size_t ouputOffset;
+        std::vector<T> work;
+  }
+  
+
+  
+
+  // Each thread should have it's own pivots to avoid should be done serially.  
+  // put them in a class that
+  // we can make a set out of.    Once we
+  // have them in a set we can partition around the pivots.  These
+  // need to carry an index of the partition bin and a value for
+  // comparison.
+
+
+
 
     
 
