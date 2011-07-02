@@ -16,6 +16,8 @@ class SorterArray(object):
         pass
     def del_range(self, beginIndex, endIndex):
         pass
+    def del_indexed(self, index)
+        pass
 
 
 class Sorter(SorterArray): 
@@ -33,9 +35,7 @@ class Sorter(SorterArray):
         pass
     def get_sequence_fixed(self, beginEl, numEl):
         pass
-    def del_sequence(self, beginEl, endEl):
-        pass
-    def del_sequence_fixed(self, beginEl, numEl):
+    def get_sequence_multi(self, rangeList):
         pass
     def return_permutation(self, doIt=True):
         pass
@@ -68,8 +68,11 @@ class SorterThread(Sorter):
         pass
     def get_sequence(self, beginEl, endEl):
         pass
+    def get_sequence_multi(self, rangeList):
+        pass
     def get_sequence_fixed(self, beginEl, numEl):
         pass
+
 
 class SorterDist(Sorter):
     """
@@ -82,6 +85,8 @@ class SorterDist(Sorter):
     def get_sorted(self):
         pass
     def get_sequence(self, beginEl, endEl)
+        pass
+    def get_sequence_multi(self, rangeList):
         pass
     def get_sequence_fixed(self, beginEl, numEl):
         pass
