@@ -27,33 +27,37 @@ namespace SorterDist {
         return pivot_ < other.value;
       }
       size_t pivotIndex() const;
-    }
   };
 
   template <class T>
   class Partition {
     private:
+      std::vector<T>::iterator chunkBegin_;
+      std::vector<T>::iterator chunkEnd_;
       std::set<PartitionWall<T>> partition_;
       std::vector<std::stack><T>> bounded_;
     public:
-      void fillPartition(std::vector<T>::iterator begin, std::vector<T>::iterator end); //single threaded
-  }
+    Partition(std::vector<T>::iterator begin, std::vector<T>::iterator end); 
+    void fillPartition(); //single threaded
+			 
+  };
 
   template <class T>
   class PartitionGang {
     private:
+      std::vector<T>::iterator resultBegin_;
+      std::vector<T>::iterator resultEnd_;
       std::vector<Partition<T>> allPartitions; // we need a partition for each thread.
     public:
-      void fillPartitions(std::vector<T>::iterator begin, std::vector<T>::iterator end); //spawns threads
-      std::vector<WorkUnit> createWorkUnits(size_t taskID); // spawns threads
-      
-  template <class T>
-    class WorkUnit {
-      public:
-        size_t ouputOffset;
-        std::vector<T> work;
-  }
-  
+      void PartitionGang(std::vector<T>::iterator begin, std::vector<T>::iterator end);
+      // fills the stacks of each thread's partition 
+      void fillPartitions(); //spawns threads
+      // Refills the input vector with the partition ordering but not sorted by popping all the stacks.  
+      void fillOutput(); // spawns threads 
+      // sort the output once it has been filled
+      void sortOutput(); // spawns threads
+  };
+   
 
   
 
