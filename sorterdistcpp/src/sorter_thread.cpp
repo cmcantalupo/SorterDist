@@ -1,29 +1,77 @@
 // This is a work in progress.  
 // C.M.Cantalupo 
 
-
-template <class T>
-class SortThreadBundle {
-  public:
-    T value;
-    size_t index;
-    bool operator < ( const T& other) {
-      return value < other.value;
+// The pivot's that will be put into a set.  
+// These need to cary an index of the partition bin and a value 
+// for comparison.  
+namespace SorterDist {
+  template <class T>
+  class Pivot {
+    public:
+      T value;
+      size_t index;
+      bool operator < ( const T& other) const {
+        return value < other.value;
     }
-};
+  };
+
+  // We need to break the input vector into nearly equal size chunks
+  // for sorting.  Since we need to sort the result, it needs to be in
+  // a random access iterator.  We also know the size of the chunks a
+  // priori since we are evenly dividing the input.  These vectors
+  // need to be OpenMP private variables so that each thread can sort
+  // simultaniously.  For this reason we have to make a copy of the
+  // input.
+  template <class T>
+  class WorkUnit {
+    public:
+      std::vector<T> chunk; // Thread private vector to be sorted
+      std::vector<T>::iterator resultBegin; // Once it is sorted these
+      std::vector<T>::iterator resultEnd;   // tell where to insert back.  
+  };
+
+    
+
+  
+}
 
 void SorterThread::sort(std::vector<T>::iterator begin, 
                         std::vector<T>::iterator end) {
-  int numThreads = omp_get_max_num_threads();
-  std::vector<std::stack<T>> sharedPartition(numThreads);
+  // To achieve parallelism here we will choose a set of pivots from 
+  // the list to be sorterd.  Here we will just choose the first elements
+  // in the vector.  The number of pivots will determine the number of 
+  // tasks to be done: one more task than the number of pivots. 
+  //
+  // For simplicity here we will choose the number of tasks to be 
+  // a factor of the number of threads.  This will be determined 
+  // by the class attribute taskFactor_.  
+  //
+  // We need to break down the main scaling dimesion of the problem, 
+  // the length of the input vector.  The first thing that we want to 
+  // do with the input is to partition it into intervals bounded by 
+  // the pivots.  This can be done with the std::set.upper_bound() 
+  // values to
+  // partition the input vector.  In the end we want taskFactor_ times
+  // the number of threads jobs and we need one fewer pivot than that
+  // to do so.  Bundle up the pivots with an index and put them in a
+  // std::set.  We will call this class "SorterPivot." The set
+  // provides a upper_bound bound function so we need to overload less
+  // than.
+  // 
 
+  // Sorry for the procedural mess below.  Need to rethink algorithm 
+  // in terms of objects.  
+
+omp_get_max_num_threads
+  int numThreads = omp_get_max_num_threads();
 #pragma omp parallel default (none) private () firstprivate() shared (sharedPartition) {
   size_t threadID = omp_get_thread_num();
   size_t numTasks = numThreads*TASK_FACTOR_;
   size_t numPivots = numTasks - 1;
   size_t vecLen = std::distance(begin, end);
 
-  // Bundle up the pivots with an index
+
+
   std::vector<T>::iterator pivotsEnd = begin + numPivots;
   std::vector<SorterThread> bundled(numPivots);
   for (itIn = begin, i = 0;
@@ -49,6 +97,8 @@ void SorterThread::sort(std::vector<T>::iterator begin,
   for (it = chunkBegin; it < chunkEnd; ++it) {
     partition[pivots.lower_bound(*it).index].push(*it);
   }
+
+  std::vector<std::vector<T>> sharedPartition(numThreads);
   
   // Combine the private stacks into shared memory
   for (i = 0; i < TASK_FACTOR_; i++) {
@@ -62,8 +112,12 @@ void SorterThread::sort(std::vector<T>::iterator begin,
   }
   
   // Farm out the shared stacks to local threads 
-  std::vector<T> myWork(sharedPartition[threadID]);
-  sort(myWork);
+  myWork
+  for (i = 0; i < numTasks; i++) {  
+    std::vector<T> myWork(sharedPartition[i]);
+    sort(myWork);
+  }
+    
 
   // Recombine the sorted chunks
 
