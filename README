@@ -73,7 +73,7 @@ Python
     cURL based parallel sorter for distributed sorting in a loosely 
     coupled parallel environment.  
 
-  + SorterNice
+  + SorterDistNice
     
     A low priority distributed parallel sorter that uses network
     bandwidth as it becomes available and writes the results to fast
