@@ -13,7 +13,7 @@ class Sorter(list):
         return sorted(range(len(self)), key = self.__getitem__)
     def sorted_sequence(self, bounds):
         ss = self.sorted()
-        if type(bounds[0]) == list:
+        if type(bounds[0]) == list or type(bounds[0]) == tuple:
             result = [ss[ss.index(bb[0]) : ss.index(bb[1]) + 1] for bb in bounds]
             return result
         return ss[ss.index(bounds[0]) : ss.index(bounds[1]) + 1]
