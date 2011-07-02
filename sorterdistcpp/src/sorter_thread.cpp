@@ -2,7 +2,7 @@
 // C.M.Cantalupo 
 
 // The pivot's that will be put into a set.  
-// These need to cary an index of the partition bin and a value 
+// These need to carry an index of the partition bin and a value 
 // for comparison.  
 namespace SorterDist {
   template <class T>
@@ -20,7 +20,7 @@ namespace SorterDist {
   // a random access iterator.  We also know the size of the chunks a
   // priori since we are evenly dividing the input.  These vectors
   // need to be OpenMP private variables so that each thread can sort
-  // simultaniously.  For this reason we have to make a copy of the
+  // simultaneously.  For this reason we have to make a copy of the
   // input.
   template <class T>
   class WorkUnit {
@@ -30,6 +30,8 @@ namespace SorterDist {
       std::vector<T>::iterator resultEnd;   // tell where to insert back.  
   };
 
+  //
+
     
 
   
@@ -38,7 +40,7 @@ namespace SorterDist {
 void SorterThread::sort(std::vector<T>::iterator begin, 
                         std::vector<T>::iterator end) {
   // To achieve parallelism here we will choose a set of pivots from 
-  // the list to be sorterd.  Here we will just choose the first elements
+  // the list to be sorted.  Here we will just choose the first elements
   // in the vector.  The number of pivots will determine the number of 
   // tasks to be done: one more task than the number of pivots. 
   //
@@ -46,7 +48,7 @@ void SorterThread::sort(std::vector<T>::iterator begin,
   // a factor of the number of threads.  This will be determined 
   // by the class attribute taskFactor_.  
   //
-  // We need to break down the main scaling dimesion of the problem, 
+  // We need to break down the main scaling dimension of the problem, 
   // the length of the input vector.  The first thing that we want to 
   // do with the input is to partition it into intervals bounded by 
   // the pivots.  This can be done with the std::set.upper_bound() 
