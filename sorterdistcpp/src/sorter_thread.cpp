@@ -4,18 +4,27 @@
 namespace SorterDist {
 
   // We need to break the input vector into nearly equal size chunks
-  // for sorting.  Since we need to sort the result, it needs to be in
-  // a random access iterator.  We also know the size of the chunks a
-  // priori since we are evenly dividing the input.  These vectors
-  // need to be OpenMP private variables so that each thread can sort
-  // simultaneously.  For this reason we have to make a copy of the
-  // input.
+  // for partitioning.  One chunk for each thread. 
+  //
+  // We can builid up a Partition from an array of non-repeating 
+  // values (pivots) from the input vector.  
+  //
+  // Each thread will have and make its own Partition.  These will be
+  // OpenMP private.  Each partition has a stack for each thread and
+  // each task.  This implies that the total number of stacks over all
+  // threads is numThreads^3*taskFactor_.
+  //
+  // The threads will be managed by the PartitionGang.  This class
+  // will hold all of the Partitions and will be the class to 
+  // spawn threads.  
 
   // Choose pivots from the input vector and put them in a new vector
-  // to be sorted.  Now that they are ordered we can tag them with a 
-  // partition index.  This new tagged T will be a PartitionWall and 
-  // we can build a partition from a vector of PartitionWalls.  The 
-  // partition will be read only so it can be shared between tasks.  
+  // to be sorted.  Now that they are ordered we can tag them with a
+  // partition index.  This new tagged T will be a PartitionWall and
+  // we can build a partition from a vector of PartitionWalls.
+  // The partition will be read only so it can be shared between
+  // tasks.
+
   template <class T>
   class PartitionWall {
     private:
