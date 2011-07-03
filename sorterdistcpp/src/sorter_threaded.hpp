@@ -1,3 +1,12 @@
+// Shared memory threading with OpenMP does not play nice with the
+// object oriented model.  It leverages threading of loops which 
+// manipulate data.  This makes the concept of a thread object 
+// not possible, since OpenMP dictates the work that each thread
+// will do based on an index in a for loop.  This is making it 
+// difficult to factor this algorithm using OpenMP.  Maybe 
+// posix threads would be a better fit.  
+
+
 template <class T>
 class SorterThreaded {
   public:
