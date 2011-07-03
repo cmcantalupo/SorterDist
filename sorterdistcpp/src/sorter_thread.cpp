@@ -19,12 +19,6 @@ namespace SorterDist {
   // spawn threads.  
   //
 
-  // Choose pivots from the input vector and put them in a new vector
-  // to be sorted.  Now that they are ordered we can tag them with a
-  // partition index.  This new tagged T will be a PartitionWall and
-  // we can build a partition from a vector of PartitionWalls.
-  // The partition will be read only so it can be shared between
-  // tasks.
 
   template <class T>
   class PartitionWall {
@@ -89,23 +83,21 @@ void SorterThread::sort(std::vector<T>::iterator begin,
   // a factor of the number of threads.  This will be determined 
   // by the class attribute taskFactor_.  
   //
-  // We need to break down the main scaling dimension of the problem, 
-  // the length of the input vector.  The first thing that we want to 
-  // do with the input is to partition it into intervals bounded by 
-  // the pivots.  This can be done with the std::set.upper_bound() 
-  // values to
+  // We need to break down the main scaling dimension of the problem,
+  // the length of the input vector.  The first thing that we want to
+  // do with the input is to partition it into intervals bounded by
+  // the pivots.  This can be done with the std::set.upper_bound() to
   // partition the input vector.  In the end we want taskFactor_ times
   // the number of threads jobs and we need one fewer pivot than that
-  // to do so.  Bundle up the pivots with an index and put them in a
-  // std::set.  We will call this class "SorterPivot." The set
-  // provides a upper_bound bound function so we need to overload less
-  // than.
+  // to do so.  Bundle up the pivots with a stack and put them in a
+  // std::set along with a dummy pivot for the end.  We will
+  // call this class "PartitionWall." The set provides a upper_bound
+  // bound function so we need to overload less than.
   // 
 
   // Sorry for the procedural mess below.  Need to rethink algorithm 
   // in terms of objects.  
 
-omp_get_max_num_threads
   int numThreads = omp_get_max_num_threads();
 #pragma omp parallel default (none) private () firstprivate() shared (sharedPartition) {
   size_t threadID = omp_get_thread_num();
