@@ -75,24 +75,7 @@ namespace SorterDist {
       void fillOutput(); // spawns threads 
       // sort the output once it has been filled with the partitions.  
       void sortOutput(); // spawns threads
-  };
-   
-
-  
-
-  // Each thread should have it's own pivots to avoid should be done serially.  
-  // put them in a class that
-  // we can make a set out of.    Once we
-  // have them in a set we can partition around the pivots.  These
-  // need to carry an index of the partition bin and a value for
-  // comparison.
-
-
-
-
-    
-
-  
+  };  
 }
 
 void SorterThread::sort(std::vector<T>::iterator begin, 
