@@ -17,6 +17,7 @@ namespace SorterDist {
   // The threads will be managed by the PartitionGang.  This class
   // will hold all of the Partitions and will be the class to 
   // spawn threads.  
+  //
 
   // Choose pivots from the input vector and put them in a new vector
   // to be sorted.  Now that they are ordered we can tag them with a
@@ -28,14 +29,20 @@ namespace SorterDist {
   template <class T>
   class PartitionWall {
     private:
+      bool isEnd;
       T pivot_;
-      size_t index_;
+      std::stack<T> bounded_
     public:
-      PartitionWall(const T& pivot);
+      PartitionWall(const T& pivot, const bool &isEnd);
+
       bool operator < ( const T& other) const {
-        return pivot_ < other.value;
+        if (isEnd) {
+          return false;
+        }
+        else
+          return pivot_ < other.value;
       }
-      size_t pivotIndex() const;
+
   };
 
   template <class T>
@@ -44,9 +51,10 @@ namespace SorterDist {
       std::vector<T>::iterator chunkBegin_;
       std::vector<T>::iterator chunkEnd_;
       std::set<PartitionWall<T>> partition_;
-      std::vector<std::stack><T>> bounded_;
     public:
-    Partition(std::vector<T>::iterator begin, std::vector<T>::iterator end); 
+    Partition(std::vector<T> pivots, 
+              std::vector<T>::iterator chunkBegin, 
+              std::vector<T>::iterator chunkEnd); 
     void fillPartition(); //single threaded
 			 
   };
@@ -54,6 +62,7 @@ namespace SorterDist {
   template <class T>
   class PartitionGang {
     private:
+      std::vector<T>::pivots_;
       std::vector<T>::iterator resultBegin_;
       std::vector<T>::iterator resultEnd_;
       std::vector<Partition<T>> allPartitions; // we need a partition for each thread.
@@ -61,9 +70,10 @@ namespace SorterDist {
       void PartitionGang(std::vector<T>::iterator begin, std::vector<T>::iterator end);
       // fills the stacks of each thread's partition 
       void fillPartitions(); //spawns threads
-      // Refills the input vector with the partition ordering but not sorted by popping all the stacks.  
+      // Refills the input vector with the values partitioned 
+      // between the pivots by popping all the stacks.  
       void fillOutput(); // spawns threads 
-      // sort the output once it has been filled
+      // sort the output once it has been filled with the partitions.  
       void sortOutput(); // spawns threads
   };
    
