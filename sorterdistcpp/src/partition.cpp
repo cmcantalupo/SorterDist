@@ -20,8 +20,14 @@ namespace SorterThreadedHelper {
          it != chunkEnd_; ++it) {
       bucket = partition_.upper_bound(PartitionWall(*it,false));
       // This doesn't work, you can't manipulate the element of a set
-      // Need to go back to original design where the stacks are in a 
-      // vector and the sets hold an index.  
+      // Need to go back to original design where the stacks are in a
+      // vector and the sets hold an index.
+      //  
+      // Alternatively we can insert and delete.  We would have to
+      // store a pointer to the stack in the element inserted and
+      // deleted rather than the stack itself.  This seems like a
+      // better approach design wise, and the stacks for the
+      // partitioning belong in the application heap anyway.
       bucket->pushBounded(*it);
     }
   }
