@@ -1,12 +1,8 @@
 #ifndef st_sorter_threaded_hpp
 #define st_sorter_threaded_hpp
+
 #include <string>
 #include <vector>
-
-
-// The direct use of the STL template of templated containers is not allowed.
-// This needs to be fixed.  
-
 
 class SorterThreaded {
   public:

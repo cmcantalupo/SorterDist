@@ -2,7 +2,7 @@
 #define st_partition_hpp
 
 #include <set>
-#include "sorter_threaded.hpp"
+#include <vector>
 #include "partition_wall.hpp"
 
 namespace SorterThreadedHelper {
@@ -13,12 +13,13 @@ namespace SorterThreadedHelper {
 	        const std::set<double>::iterator pivotsEnd,
                 const std::vector<double>::iterator chunkBegin, 
                 const std::vector<double>::iterator chunkEnd); 
+      ~Partition();
       void fillPartition(); //single threaded
 
     private:
       const std::vector<double>::iterator chunkBegin_;
       const std::vector<double>::iterator chunkEnd_;
-      std::set<PartitionWall> *partition_;
+      std::set<PartitionWall*> partition_;
   };
 
 }

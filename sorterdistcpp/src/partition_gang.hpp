@@ -1,7 +1,6 @@
 #ifndef st_partition_gang_hpp
 #define st_partition_gang_hpp
 
-#include "sorter_threaded.hpp"
 #include "partition.hpp"
 
 namespace SorterThreadedHelper {
