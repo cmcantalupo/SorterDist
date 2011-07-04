@@ -14,7 +14,8 @@ namespace SorterThreadedHelper {
     partition_.insert(new PartitionWall(*pivotsBegin, true));
   }
   Partition::~Partition() {
-    for (std::set<PartitionWall*>::iterator it = partition_.begin(); it != partition_.end(); ++it) {
+    for (std::set<PartitionWall*>::iterator it = partition_.begin(); 
+         it != partition_.end(); ++it) {
       delete *it;
     }
   }
