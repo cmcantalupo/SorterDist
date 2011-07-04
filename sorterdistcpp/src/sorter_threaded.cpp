@@ -35,16 +35,16 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   // bound function so we need to overload less than.
   // 
 
-  //  try {
+  try {
     SorterThreadedHelper::PartitionGang gang(begin, end, numThreads_, taskFactor_);
-    //  }
-    //  catch ( SorterThreadedHelper::TooFewPivotsError) {
-    if (0) {std::sort(begin, end);
-    return;
-    //  }
-  gang.fillPartitions();
-  gang.fillOutput();
-  gang.sortOutput();
+    gang.fillPartitions();
+    gang.fillOutput();
+    gang.sortOutput();
+
+  }
+  catch (std::exception const &e) {
+    std::sort(begin, end);
+  }
 }
 
 SorterThreaded::SorterThreaded(size_t taskFactor, size_t numThreads) :

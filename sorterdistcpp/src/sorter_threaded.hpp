@@ -15,12 +15,18 @@ class SorterThreaded {
               std::vector<double>::iterator end);
     void setTaskFactor(size_t taskFactor);
     void setNumThreads(size_t numThreads);
-    enum Exceptions {TooFewPivotsError};
   private:
     size_t taskFactor_;
     // If numThreads_ == -1 then omp_max_num_threads will be used
     size_t numThreads_;
 };
+
+struct SorterThreadedException : std::exception { 
+  enum Error {TooFewPivots};
+  inline SorterThreadedException(Error code) : error(code) {} 
+  const Error error;
+};
+
 
   // We need to break the input vector into nearly equal size chunks
   // for partitioning.  One chunk for each thread. 
