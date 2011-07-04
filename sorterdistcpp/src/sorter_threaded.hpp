@@ -1,12 +1,3 @@
-// Shared memory threading with OpenMP does not play nice with the
-// object oriented model.  It leverages threading of loops which 
-// manipulate data.  This makes the concept of a thread object 
-// not possible, since OpenMP dictates the work that each thread
-// will do based on an index in a for loop.  This is making it 
-// difficult to factor this algorithm using OpenMP.  Maybe 
-// posix threads would be a better fit.  
-
-
 template <class T>
 class SorterThreaded {
   public:
@@ -45,7 +36,7 @@ namespace SorterThreadedHelper {
       PartitionWall(const T& pivot, const bool &isEnd);
       bool operator < (const T& other) const {
         if (isEnd) return false;
-        else return pivot_ < other.value;
+        else return pivot_ < other;
       }
     private:
       bool isEnd;
@@ -58,26 +49,40 @@ namespace SorterThreadedHelper {
     private:
       std::vector<T>::iterator chunkBegin_;
       std::vector<T>::iterator chunkEnd_;
-      std::set<PartitionWall<T>> partition_;
+      std::set<PartitionWall<T>> *partition_;
     public:
-    Partition(std::vector<T> pivots, 
+    Partition(PivotVector pivots, 
               std::vector<T>::iterator chunkBegin, 
               std::vector<T>::iterator chunkEnd); 
     void fillPartition(); //single threaded
   };
 
   template <class T>
+  class PivotVector {
+    private:
+      std::vector<T>* pivots_;
+    public:
+      PivotVector(std::vector<T>::iterator begin, std::vector<T>::iterator end, size_t numPivots);
+      ~PivotVector();
+      void iterators( std::vector<T>::iterator &begin, std::vector<T>::iterator &end);
+      size_t size();
+  }
+
+  template <class T>
   class PartitionGang {
     private:
-      std::vector<T>::pivots_;
+      PivotVector pivots_;
       std::vector<T>::iterator resultBegin_;
       std::vector<T>::iterator resultEnd_;
-      std::vector<Partition<T>> allPartitions; // we need a partition for each thread.
+      std::vector<Partition<T>*>* allPartitions; // we need a partition for each thread.
       void chunk(size_t numChunk, size_t chunkIndex,
 	         std::vector<T>::iterator& chunkBegin,
 	         std::vector<T>::iterator& chunkEnd);
     public:
-      void PartitionGang(std::vector<T>::iterator begin, std::vector<T>::iterator end);
+      PartitionGang(std::vector<T>::iterator begin, std::vector<T>::iterator end, 
+                    size_t numThread, size_t threadFactor);
+      ~PartitionGang();
+
       // fills the stacks of each thread's partition 
       void fillPartitions(); //spawns threads
       // Refills the input vector with the values partitioned 

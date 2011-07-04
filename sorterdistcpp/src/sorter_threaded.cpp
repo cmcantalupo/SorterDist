@@ -26,6 +26,57 @@ void SorterThread::sort(std::vector<T>::iterator begin,
   // bound function so we need to overload less than.
   // 
 
+  try {
+    PartitionGang gang(begin, end, numThreads_, threadFactor_);
+  }
+  catch (SorterThreadedHelper::TooFewPivotsError) {
+    std::sort(begin, end);
+    return;
+  }
+  gang.fillPartitions();
+  gand.fillOutput();
+  gang.sortOutput();
+}
+
+SorterThreadedHelper::PartitionGang(std::vector<T>::iterator begin, 
+                                    std::vector<T>::iterator end, 
+                                    size_t numThreads, size_t taskFactor) {
+  resultBegin_ = begin;
+  resultEnd_ = end;
+
+  pivots_ = PivotVector(begin, end, numThreads*taskFactor - 1);
+
+  allPartitions_ = new std::vector<Partition<T>*>(numThreads);
+  for (int i= 0; i < numThreads; ++i) {
+    chunk(numThreads, i, chunkBegin, chunkEnd);
+    allPartitions[i] = new Partition<T>(pivots_, chunkBegin, chunkEnd);
+  }
+}
+
+SorterThreadedHelper::~PartitionGang() {
+  std::vector<Partition<T>*>::iterator it;
+
+  for (it = allPartitions.begin(); 
+       it < allPartitions.end();
+       ++it) {
+    delete allPartitions_[i];
+  }
+  delete allPartitions_;
+}
+  
+
+
+
+
+
+
+
+#if 0
+
+
+
+
+
   // Sorry for the procedural mess below.  Need to rethink algorithm 
   // in terms of objects.  
 
@@ -149,3 +200,4 @@ void SorterThread::chunk(std::vector<T>::iterator begin,
 
 
 
+#endif // endo of #if 0 to block out mess
