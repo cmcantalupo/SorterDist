@@ -4,12 +4,10 @@
 #ifndef sorter_threaded_hpp
 #define sorter_threaded_hpp
 
-#include "openmp.h"
 #include "sorter_threaded.hpp"
 #include "partition_wall.hpp"
 #include "partition.hpp"
 #include "partition_gang.hpp"
-#include "pivot_vector.hpp"
 
 
 
@@ -52,12 +50,8 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 }
 
 SorterThreaded::SorterThreaded(size_t taskFactor, size_t numThreads) :
-  taskFactor_(taskFactor) {
-  if (numThreads == -1)
-    numThreads_ = omp_max_num_threads();
-  else
-    numThreads_ = numThreads;
-}
+  taskFactor_(taskFactor), 
+  numThreads_(numThreads) {}
 
 
                                 
