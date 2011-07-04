@@ -14,28 +14,29 @@ namespace SorterThreadedHelper {
     std::vector<double>::iterator chunkBegin;
     std::vector<double>::iterator chunkEnd;
     
-    std::vector<double>::iterator it;
-    for (it = begin; it != end && 
-         pivots_.size() < numThreads_*taskFactor_ - 1;
+    for (std::vector<double>::iterator it = begin;
+         it != end && pivots_.size() < numThreads_*taskFactor_ - 1;
          ++it) {
       pivots_.insert(*it);
     }
-    if (it == end && pivots_.size() < numThreads_*taskFactor_ - 1) {
+    if (pivots_.size() < numThreads_*taskFactor_ - 1) {
       throw(SorterThreadedException::TooFewPivots);
     }      
 
     allPartitions_ = new std::vector<Partition*>(numThreads);
-    for (int i = 0; i < numThreads; ++i) {
+    size_t i = 0;
+    for (std::vector<Partition*>::iterator it = allPartitions_->begin();  
+         it != allPartitions_->end(); ++it, ++i) {
       chunk(numThreads, i, chunkBegin, chunkEnd);
-      allPartitions_[i] = new Partition(pivots_.begin(), pivots_.end(), 
-                                        chunkBegin, chunkEnd);
+      *it = new Partition(pivots_.begin(), pivots_.end(), 
+                          chunkBegin, chunkEnd);
     }
   }
 
   PartitionGang::~PartitionGang() {
     std::vector<Partition*>::iterator it;
-    for (it = allPartitions_.begin(); 
-         it < allPartitions_.end();
+    for (it = allPartitions_->begin(); 
+         it < allPartitions_->end();
          ++it) {
       delete *it;
     }
