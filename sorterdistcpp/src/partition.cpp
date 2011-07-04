@@ -4,9 +4,10 @@
 
 namespace SorterThreadedHelper {
  
-  Partition::Partition(const std::set<double> &pivots,
-                       std::vector<double>::iterator chunkBegin,
-                       std::vector<double>::iterator chunkEnd) {
+  Partition::Partition(const std::set<double>::iterator pivotBegin,
+                       const std::set<double>::iterator pivotEnd,
+                       const std::vector<double>::iterator chunkBegin,
+                       const std::vector<double>::iterator chunkEnd) {
   
   }
 }
