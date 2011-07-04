@@ -8,8 +8,8 @@ namespace SorterThreadedHelper {
   class PartitionWall {
     public:
       PartitionWall(const double& pivot, const bool &isEnd);
+      void stackBounded(const double& boundedEl);
       friend bool operator< (const PartitionWall& l, const PartitionWall& r);
-      friend bool operator< (const PartitionWall& l, const double& r);
     private:
       bool isEnd_;
       double pivot_;

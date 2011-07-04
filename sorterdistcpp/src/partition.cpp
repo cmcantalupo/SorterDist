@@ -2,24 +2,26 @@
 
 namespace SorterThreadedHelper {
  
-  Partition::Partition(const std::set<double>::iterator pivotsBegin,
-                       const std::set<double>::iterator pivotsEnd,
+  Partition::Partition(const std::set<double>& pivots,
                        const std::vector<double>::iterator chunkBegin,
                        const std::vector<double>::iterator chunkEnd) :
     chunkBegin_(chunkBegin), chunkEnd_(chunkEnd) {
   
-    for (std::set<double>::iterator it = pivotsBegin; it != pivotsEnd; ++it) { 
-      partition_.insert(new PartitionWall(*it, false));
+    for (std::set<double>::iterator it = pivots.begin(); it != pivots.end(); ++it) {
+      partition_.insert(PartitionWall(*it, false));
     }
-    partition_.insert(new PartitionWall(*pivotsBegin, true));
-  }
-  Partition::~Partition() {
-    for (std::set<PartitionWall*>::iterator it = partition_.begin(); 
-         it != partition_.end(); ++it) {
-      delete *it;
-    }
+    partition_.insert(PartitionWall(*pivots.begin(), true));
   }
 
+
+  void Partition::fillPartition() {
+    std::set<PartitionWall>::iterator bucket;
+    for (std::vector<double>::iterator it = chunkBegin_;
+         it != chunkEnd_; ++it) {
+      bucket = partition_.upper_bound(PartitionWall(*it,false));
+      bucket->stackBounded(*it);
+    }
+  }
 
 }
                                 

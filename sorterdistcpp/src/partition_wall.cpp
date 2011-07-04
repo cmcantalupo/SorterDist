@@ -10,9 +10,9 @@ namespace SorterThreadedHelper {
     if (l.isEnd_) return false;
     else return l.pivot_ < r.pivot_;     
   }
-  bool operator< (const PartitionWall& l, const double& r) {
-    if (l.isEnd_) return false;
-    else return l.pivot_ < r;
+
+  void stackBounded(const double& boundedEl) {
+    bounded_.push(boundedEl);
   }
 
 }
