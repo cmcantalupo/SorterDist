@@ -5,8 +5,6 @@
 #define sorter_threaded_hpp
 
 #include "sorter_threaded.hpp"
-#include "partition_wall.hpp"
-#include "partition.hpp"
 #include "partition_gang.hpp"
 
 
