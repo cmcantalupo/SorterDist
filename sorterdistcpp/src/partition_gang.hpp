@@ -2,15 +2,19 @@
 #define st_partition_gang_hpp
 
 #include "sorter_threaded.hpp"
+#include "pivot_vector.hpp"
+#include "partition.hpp"
 
 namespace SorterThreadedHelper {
 
   class PartitionGang {
     private:
-      PivotVector pivots_;
+      size_t numThreads_; 
+      size_t taskFactor_;
+      std::set<double> pivots_;
       std::vector<double>::iterator resultBegin_;
       std::vector<double>::iterator resultEnd_;
-      std::vector<Partition*>* allPartitions; // we need a partition for each thread.
+      std::vector<Partition*>* allPartitions_; // we need a partition for each thread.
       void chunk(size_t numChunk, size_t chunkIndex,
 	         std::vector<double>::iterator& chunkBegin,
 	         std::vector<double>::iterator& chunkEnd);
