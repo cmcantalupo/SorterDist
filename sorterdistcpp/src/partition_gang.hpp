@@ -2,7 +2,6 @@
 #define st_partition_gang_hpp
 
 #include "sorter_threaded.hpp"
-#include "pivot_vector.hpp"
 #include "partition.hpp"
 
 namespace SorterThreadedHelper {

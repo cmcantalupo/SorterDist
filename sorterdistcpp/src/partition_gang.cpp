@@ -1,6 +1,5 @@
 #include "sorter_threaded.hpp"
 #include "partition_gang.hpp"
-#include "pivot_vector.hpp"
 #include "partition.hpp"
 
 namespace SorterThreadedHelper {
@@ -16,8 +15,8 @@ namespace SorterThreadedHelper {
     std::vector<double>::iterator chunkEnd;
     
     std::vector<double>::iterator it;
-    for (it = begin;
-         it != end && pivots_.size() < numThreads_*taskFactor_ - 1;
+    for (it = begin; it != end && 
+         pivots_.size() < numThreads_*taskFactor_ - 1;
          ++it) {
       pivots_.insert(*it);
     }
@@ -28,7 +27,8 @@ namespace SorterThreadedHelper {
     allPartitions_ = new std::vector<Partition*>(numThreads);
     for (int i = 0; i < numThreads; ++i) {
       chunk(numThreads, i, chunkBegin, chunkEnd);
-      allPartitions_[i] = new Partition(pivots_, chunkBegin, chunkEnd);
+      allPartitions_[i] = new Partition(pivots_.begin(), pivots_.end(), 
+                                        chunkBegin, chunkEnd);
     }
   }
 
