@@ -11,8 +11,12 @@ namespace SorterThreadedHelper {
     else return l.pivot_ < r.pivot_;     
   }
 
-  void stackBounded(const double& boundedEl) {
+  void pushBounded(const double& boundedEl) const {
     bounded_.push(boundedEl);
+  }
+
+  double popBounded() const {
+    return bounded_.pop();
   }
 
 }

@@ -19,7 +19,7 @@ namespace SorterThreadedHelper {
     for (std::vector<double>::iterator it = chunkBegin_;
          it != chunkEnd_; ++it) {
       bucket = partition_.upper_bound(PartitionWall(*it,false));
-      bucket->stackBounded(*it);
+      bucket->pushBounded(*it);
     }
   }
 
