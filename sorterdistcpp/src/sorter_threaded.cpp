@@ -1,10 +1,13 @@
 // This is a work in progress.  
 // C.M.Cantalupo 
 
+#ifndef sorter_threaded_hpp
+#define sorter_threaded_hpp
+
 #include "sorter_threaded.hpp"
 
-void SorterThread::sort(std::vector<T>::iterator begin, 
-                        std::vector<T>::iterator end) {
+void SorterThreaded<kind>::sort(std::vector<kind>::iterator begin, 
+                                std::vector<kind>::iterator end) {
   // To achieve parallelism here we will choose a set of pivots from 
   // the list to be sorted.  Here we will just choose the first elements
   // in the vector.  The number of pivots will determine the number of 
@@ -34,37 +37,21 @@ void SorterThread::sort(std::vector<T>::iterator begin,
     return;
   }
   gang.fillPartitions();
-  gand.fillOutput();
+  gang.fillOutput();
   gang.sortOutput();
 }
 
-SorterThreadedHelper::PartitionGang(std::vector<T>::iterator begin, 
-                                    std::vector<T>::iterator end, 
-                                    size_t numThreads, size_t taskFactor) {
-  resultBegin_ = begin;
-  resultEnd_ = end;
-
-  pivots_ = PivotVector(begin, end, numThreads*taskFactor - 1);
-
-  allPartitions_ = new std::vector<Partition<T>*>(numThreads);
-  for (int i= 0; i < numThreads; ++i) {
-    chunk(numThreads, i, chunkBegin, chunkEnd);
-    allPartitions[i] = new Partition<T>(pivots_, chunkBegin, chunkEnd);
-  }
+SorterThreaded<kind>::SorterThreaded(size_t taskFactor, size_t numThreads) :
+  taskFactor_(taskFactor) {
+  if (numThreads == -1)
+    numThreads_ = omp_max_num_threads();
+  else
+    numThreads_ = numThreads;
 }
 
-SorterThreadedHelper::~PartitionGang() {
-  std::vector<Partition<T>*>::iterator it;
 
-  for (it = allPartitions.begin(); 
-       it < allPartitions.end();
-       ++it) {
-    delete allPartitions_[i];
-  }
-  delete allPartitions_;
-}
-  
-
+                                
+#endif
 
 
 
