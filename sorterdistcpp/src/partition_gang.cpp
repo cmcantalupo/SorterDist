@@ -31,8 +31,7 @@ namespace SorterThreadedHelper {
     for (std::vector<Partition*>::iterator it = allPartitions_->begin();  
          it != allPartitions_->end(); ++it, ++i) {
       chunk(numThreads, i, chunkBegin, chunkEnd);
-      *it = new Partition(pivots_.begin(), pivots_.end(), 
-                          chunkBegin, chunkEnd);
+      *it = new Partition(pivots_, chunkBegin, chunkEnd);
     }
   }
 

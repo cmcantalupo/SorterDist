@@ -11,12 +11,14 @@ namespace SorterThreadedHelper {
     else return l.pivot_ < r.pivot_;     
   }
 
-  void pushBounded(const double& boundedEl) const {
+  void PartitionWall::pushBounded(const double& boundedEl) {
     bounded_.push(boundedEl);
   }
 
-  double popBounded() const {
-    return bounded_.pop();
+  double PartitionWall::popBounded() {
+    double top = bounded_.top();
+    bounded_.pop();
+    return top;
   }
 
 }
