@@ -6,14 +6,17 @@
 namespace SorterThreadedHelper {
 
   class PivotVector {
+    public:
+      PivotVector(const std::vector<double>::iterator begin, 
+                  const std::vector<double>::iterator end, size_t numPivots);
+      ~PivotVector();
+      void iterators( std::vector<double>::iterator &begin, std::vector<double>::iterator &end);
+      size_t size();
     private:
       std::vector<double>* pivots_;
-    public:
-      PivotVector(std::vector<double>::const_iterator begin, const std::vector<double>::const_iterator end, size_t numPivots);
-      ~PivotVector();
-      void iterators( std::vector<double>::const_iterator &begin, std::vector<double>::const_iterator &end);
-      size_t size();
+
   };
+
 }
 
 #endif
