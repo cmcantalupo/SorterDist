@@ -1,6 +1,5 @@
 #include "sorter_threaded.hpp"
 #include "partition.hpp"
-#include "pivot_vector.hpp"
 
 namespace SorterThreadedHelper {
  
