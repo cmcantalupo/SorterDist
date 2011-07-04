@@ -28,6 +28,7 @@ namespace SorterThreadedHelper {
       // deleted rather than the stack itself.  This seems like a
       // better approach design wise, and the stacks for the
       // partitioning belong in the application heap anyway.
+      // Duh.  We need a map.  
       bucket->pushBounded(*it);
     }
   }
