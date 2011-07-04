@@ -1,6 +1,7 @@
-#include "sorter_threaded.h"
+#include "sorter_threaded.hpp"
+#include "partition_wall.hpp"
 
-SorterThreadedHelper::PartitionWall(const double& pivot, const bool &isEnd) :
-  pivot_(pivot), isEnd_(isEnd) {
-  //empty
+namespace SorterThreadedHelper {
+PartitionWall::PartitionWall(const double& pivot, const bool &isEnd) :
+  pivot_(pivot), isEnd_(isEnd) {}
 }
