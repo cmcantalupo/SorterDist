@@ -21,10 +21,10 @@ class SorterThreaded {
     size_t numThreads_;
 };
 
-struct SorterThreadedException : std::exception { 
-  enum Error {TooFewPivots};
-  inline SorterThreadedException(Error code) : error(code) {} 
-  const Error error;
+struct SorterThreadedException : std::exception {
+    enum Error {TooFewPivots};
+    inline SorterThreadedException(Error code) : error(code) {} 
+    const Error error;
 };
 
 

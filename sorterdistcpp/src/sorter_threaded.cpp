@@ -4,6 +4,7 @@
 #ifndef sorter_threaded_hpp
 #define sorter_threaded_hpp
 
+#include "openmp.h"
 #include "sorter_threaded.hpp"
 #include "partition_wall.hpp"
 #include "partition.hpp"
@@ -42,8 +43,11 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
     gang.sortOutput();
 
   }
-  catch (std::exception const &e) {
-    std::sort(begin, end);
+  catch (SorterThreadedException& e) {
+    if(e.error == SorterThreadedException::TooFewPivots)
+      std::sort(begin, end);
+    else
+      throw(e);
   }
 }
 
