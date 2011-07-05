@@ -23,8 +23,11 @@ Overview
   - Current state
   ----------------
 
-    This is currently in planning phase.  Some rough work has been
-    done in the cmc_patterns repository.
+    Sketched out the basic python interface.  Some work towards
+    implementing the threaded shared memory parallel sort in C++.  A
+    few methods are left to be filled in, and then a testing suite has
+    to be implemented.  Current design is for double data.  Need to
+    see how to implement it for python objects through BOOST.
 
 ------
 Python
@@ -108,4 +111,4 @@ C++
 
 Chris Cantalupo
 cmcantalupo@gmail.com
-July 1, 2011
+July 4, 2011
