@@ -10,7 +10,8 @@ namespace SorterThreadedHelper {
     resultBegin_(begin),
     resultEnd_(end),
     numThreads_(numThreads),
-    taskFactor_(taskFactor) {
+    taskFactor_(taskFactor), 
+    numTasks_(numThreads*taskFactor) {
     std::vector<double>::iterator chunkBegin;
     std::vector<double>::iterator chunkEnd;
 
@@ -26,23 +27,60 @@ namespace SorterThreadedHelper {
     }      
 
     // Now create partition with empty stacks for each thread
-    allPartitions_ = new std::vector<Partition*>(numThreads);
+    allPartitions_.resize(numThreads);
     size_t i = 0;
-    for (std::vector<Partition*>::iterator it = allPartitions_->begin();  
-         it != allPartitions_->end(); ++it, ++i) {
+    for (std::vector<Partition*>::iterator it = allPartitions_.begin();  
+         it != allPartitions_.end(); ++it, ++i) {
       chunk(numThreads, i, chunkBegin, chunkEnd);
       *it = new Partition(pivots_, chunkBegin, chunkEnd);
     }
   }
-
   PartitionGang::~PartitionGang() {
     // delete each of the partitions.  
-    for (std::vector<Partition*>::iterator it = allPartitions_->begin();
-         it < allPartitions_->end(); ++it) {
+    for (std::vector<Partition*>::iterator it = allPartitions_.begin();
+         it < allPartitions_.end(); ++it) {
       delete *it;
     }
-    // delete the parition vector
-    delete allPartitions_;
+  }
+
+  void PartitionGang::fillPartitions() {    
+    reducedSizes_.resize(numThreads_); 
+    for (std::vector<size_t>::iterator it = reducedSizes_.begin();
+         it != reducedSizes_.end(); ++it) {
+      *it = 0;
+    }
+#pragma omp parallel default (none) private (none) shared (allPartitions_, reducedSizes_) 
+{
+    std::vector<size_t> mySizes(numThreads_);
+    int myThreadID = 0; //omp_get_thread_num();
+
+    allPartitions_[myThreadID]->fillPartition();
+    for (size_t i = 0; i < numThreads_; ++i) {
+      if (i == myThreadID) {
+        for (size_t j = 0; j < numTasks_; ++j) {
+          reducedSizes_[j] += mySizes[j];
+        }
+      }
+      //omp_barrier();
+    }
+} // end omp parallel
+    for (size_t j = 1; j < numTasks_; ++j) {
+      reducedSizes_[j] += reducedSizes_[j-1];
+    }
+  }
+
+  void PartitionGang::fillOutput() {
+#pragma omp parallel default (none) private (none) shared (allPartitions_, reducedSizes_) 
+{
+    size_t task;
+    int threadID = 0; //omp_get_thread_num();
+    for (size_t i = 0; i < taskFactor_; ++i) {
+      task = i * numThreads_ + threadID;
+      allPartitions_[threadID]->popTask(resultBegin_ + reducedSizes_[task] - mySizes[task]);
+      reducedSizes_[task] -= mySizes[task];
+      //omp_barrier();
+    }
+}  
   }
 
 }

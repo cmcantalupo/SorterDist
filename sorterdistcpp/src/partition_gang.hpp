@@ -9,10 +9,12 @@ namespace SorterThreadedHelper {
     private:
       size_t numThreads_; 
       size_t taskFactor_;
+      size_t numTasks_;
       std::set<double> pivots_;
+      std::vector<size_t> reducedSizes_;
       std::vector<double>::iterator resultBegin_;
       std::vector<double>::iterator resultEnd_;
-      std::vector<Partition*>* allPartitions_; // we need a partition for each thread.
+      std::vector<Partition*> allPartitions_; // we need a partition for each thread.
       void chunk(size_t numChunk, size_t chunkIndex,
 	         std::vector<double>::iterator& chunkBegin,
 	         std::vector<double>::iterator& chunkEnd);
@@ -28,7 +30,7 @@ namespace SorterThreadedHelper {
       void fillOutput(); // spawns threads 
       // sort the output once it has been filled with the partitions.  
       void sortOutput(); // spawns threads
-  };  
+  };
 
 }
 
