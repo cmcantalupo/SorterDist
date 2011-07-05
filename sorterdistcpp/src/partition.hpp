@@ -3,7 +3,6 @@
 
 #include <set>
 #include <vector>
-#include "partition_wall.hpp"
 
 namespace SorterThreadedHelper {
 
@@ -18,8 +17,10 @@ namespace SorterThreadedHelper {
       const std::vector<double>::iterator chunkBegin_;
       const std::vector<double>::iterator chunkEnd_;
       std::set<double> pivots_;
-      std::map<double,std::stack<double>*> partition_;
+      std::map<std::set<double>::iterator,std::stack<double>*> partition_;
   };
+
+
 
 }
 
