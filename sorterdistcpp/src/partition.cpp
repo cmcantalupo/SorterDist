@@ -17,6 +17,8 @@ namespace SorterThreadedHelper {
     pp.first = PartitionWall::PartitionWall(*pivots.begin(), true);
     pp.second = new std::stack<double>;
     partition_.insert(pp);
+
+    taskIt_ = partition_.begin();
   }
   Partition::~Partition() {
     for (std::map<PartitionWall,std::stack<double>*>::iterator it = partition_.begin(); it != partition_.end(); ++it) {
@@ -33,6 +35,15 @@ namespace SorterThreadedHelper {
       if (ub == partition_.end()) --ub;
       ub->second->push(*it);
     }
+  }
+
+  void Partition::popTask(std::vector<double>::iterator resultBegin) {
+    while (!taskIt_->second->empty()) {
+      *resultBegin = taskIt_->second->top();
+      taskIt_->second->pop();
+      ++resultBegin;
+    }
+    ++taskIt_;
   }
 
 }
