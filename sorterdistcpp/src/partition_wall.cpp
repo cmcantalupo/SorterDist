@@ -7,7 +7,7 @@ namespace SorterThreadedHelper {
     pivot_(pivot), isEnd_(isEnd) {}
 
   PartitionWall::PartitionWall() :
-    pivot_(), isEnd_(false) {}
+    pivot_(), isEnd_(true) {}
 
   bool operator< (const PartitionWall& l, const PartitionWall& r) {
     if (l.isEnd_) return false;
