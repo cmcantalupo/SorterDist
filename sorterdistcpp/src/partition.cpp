@@ -46,6 +46,10 @@ namespace SorterThreadedHelper {
     ++taskIt_;
   }
 
+  void Partition::stackSizes(std::vector<size_t>::iterator begin, 
+                             std::vector<size_t>::iterator end) {
+  }
+
 }
                                 
 
