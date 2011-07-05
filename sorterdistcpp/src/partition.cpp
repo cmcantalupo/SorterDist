@@ -1,4 +1,5 @@
 #include "partition.hpp"
+#include "partition_wall.hpp"
 
 namespace SorterThreadedHelper {
  
@@ -8,29 +9,24 @@ namespace SorterThreadedHelper {
     chunkBegin_(chunkBegin), chunkEnd_(chunkEnd) {
   
     for (std::set<double>::iterator it = pivots.begin(); it != pivots.end(); ++it) {
-      partition_.insert(PartitionWall(*it, false));
+      partition_.insert(std::pair<PartitionWall,std::stack<double>*>(PartitionWall(*it,false), new stack<double>));
     }
-    partition_.insert(PartitionWall(*pivots.begin(), true));
+    partition_.insert(std::pair<PartitionWall,std::stack<double>*>(PartitionWall(*pivots.begin(), true), new stack<double>));
   }
-
+  Partition::~Partition() {
+    for (std::map<PartitionWall,std::stack<double>*>:iterator it = partition_.begin(); it != partition_.end(); ++it) {
+      delete it.second();
+    }
+  }
+     
 
   void Partition::fillPartition() {
-    std::set<PartitionWall>::iterator bucket;
+    std::set<double>::iterator ub;
     for (std::vector<double>::iterator it = chunkBegin_;
          it != chunkEnd_; ++it) {
-      ub = partition_.upper_bound(_pivots);
-      
-      partition_[bucket
-      // This doesn't work, you can't manipulate the element of a set
-      // Need to go back to original design where the stacks are in a
-      // vector and the sets hold an index.
-      //  
-      // Alternatively we can insert and delete.  We would have to
-      // store a pointer to the stack in the element inserted and
-      // deleted rather than the stack itself.  This seems like a
-      // better approach design wise, and the stacks for the
-      // partitioning belong in the application heap anyway.
-      bucket->pushBounded(*it);
+      ub = partition_.upper_bound(PartitionWall(*it, false));
+      if (ub == partition_.end()) --ub;
+      ub->second()->push(*it);
     }
   }
 
