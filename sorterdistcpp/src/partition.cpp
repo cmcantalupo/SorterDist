@@ -18,7 +18,9 @@ namespace SorterThreadedHelper {
     std::set<PartitionWall>::iterator bucket;
     for (std::vector<double>::iterator it = chunkBegin_;
          it != chunkEnd_; ++it) {
-      bucket = partition_.upper_bound(PartitionWall(*it,false));
+      ub = partition_.upper_bound(_pivots);
+      
+      partition_[bucket
       // This doesn't work, you can't manipulate the element of a set
       // Need to go back to original design where the stacks are in a
       // vector and the sets hold an index.
