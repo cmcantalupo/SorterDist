@@ -6,15 +6,15 @@
 
 class SorterThreaded {
   public:
-    SorterThreaded(size_t taskFactor=8, size_t numThreads=-1);
+    SorterThreaded(int taskFactor=8, int numThreads=-1);
     void sort(std::vector<double>::iterator begin, 
               std::vector<double>::iterator end);
     void setTaskFactor(size_t taskFactor);
     void setNumThreads(size_t numThreads);
   private:
-    size_t taskFactor_;
+    int taskFactor_;
     // If numThreads_ == -1 then omp_max_num_threads will be used
-    size_t numThreads_;
+    int numThreads_;
 };
 
 

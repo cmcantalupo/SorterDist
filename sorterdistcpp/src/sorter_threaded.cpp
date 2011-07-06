@@ -1,10 +1,16 @@
 // This is a work in progress.  
 // C.M.Cantalupo 
 
+#include <algorithm>
+#ifdef _OPENMP
+#include "omp.h"
+#endif
 #include "sorter_threaded.hpp"
 #include "partition.hpp"
 #include "splinter.hpp"
 #include "sorter_threaded_exception.hpp"
+
+using namespace SorterThreadedHelper;
 
 void SorterThreaded::sort(std::vector<double>::iterator begin, 
                           std::vector<double>::iterator end) {
@@ -33,10 +39,10 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   std::sort(begin, end);
 #else
   if (numThreads_ == -1) {
-    size_t numThreads = omp_get_max_num_threads();
+    numThreads_ = omp_get_max_threads();
   }
 
-  numTasks = numThreads_ * taskFactor_;
+  size_t numTasks = numThreads_ * taskFactor_;
   std::vector<double>::iterator chunkBegin;
   std::vector<double>::iterator chunkEnd;
   std::set<double> pivots;
@@ -54,7 +60,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
   
   Splinter splinter(begin, end);
-  std::vector<Partition*> allPartitions(numThreads);
+  std::vector<Partition*> allPartitions(numThreads_);
   std::vector<std::vector<double>::iterator> chunks;
 
   size_t i = 0;
@@ -63,46 +69,49 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
     *it = new Partition(pivots);
   }
 
-  splinter.even(numThreads, chunks);
+  splinter.even(numThreads_, chunks);
 
-#pragma omp parallel default (none) private (none) shared (allPartitions, splinter, chunks)
+#pragma omp parallel default (none) private (none) shared (allPartitions, splinter, chunks, taskOffsets)
 {
-  int my threadID = omp_get_thread_num();
-  allPartitions[threadID]->fill(chunks[myThreadID], chunks[myThreadID+1]);  
-  omp_barrier();
+  int threadID = omp_get_thread_num();
+  allPartitions[threadID]->fill(chunks[threadID], chunks[threadID+1]);
+#pragma  omp barrier;
   std::vector<size_t> mySizes;
   allPartitions[threadID]->taskSizes(mySizes);
 
-  for (size_t i = 0; i < numThreads; ++i) {
+  for (size_t i = 0; i < numThreads_; ++i) {
     if (i == threadID) {
       splinter.addSizes(mySizes);
     }
-    omp_barrier();
+#pragma omp barrier
   }
 
-  for (size_t i = 0; i < numThreads; ++i) {
+  std::vector<std::vector<double>::iterator> offsets;
+  for (size_t i = 0; i < numThreads_; ++i) {
     if (i == threadID) {
-      getOffsets(mySizes, offsets);
+      splinter.getOffsets(mySizes, offsets);
     }
-    omp_barrier();
+#pragma omp barrier
   }
   
   for (size_t i = 0; i < numTasks; ++i) {
     allPartitions[threadID]->popTask(offsets[i], offsets[i+1]);
   }
 
-  if (threadID == numThreads-1) {
+  std::vector<std::vector<double>::iterator> taskOffsets;
+  if (threadID == numThreads_ - 1) {
     taskOffsets = offsets;
   }
 
 #pragma omp parallel for schedule (dynamic)
-  for (i = 0; i < numTasks; ++i) {
+  for (size_t i = 0; i < numTasks; ++i) {
     std::sort(taskOffsets[i], taskOffsets[i+1]);
   }
 #endif
+} //end omp parallel region
 }
 
-SorterThreaded::SorterThreaded(size_t taskFactor, size_t numThreads) :
+SorterThreaded::SorterThreaded(int taskFactor, int numThreads) :
   taskFactor_(taskFactor), 
   numThreads_(numThreads) {}
 
