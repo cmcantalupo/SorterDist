@@ -14,4 +14,9 @@ namespace SorterThreadedHelper {
     else return l.pivot_ < r.pivot_;     
   }
 
+  void PartitionWall::set(const double &pivot, const bool &isEnd) {
+    pivot_ = pivot;
+    isEnd_ = isEnd;
+  }
+
 }

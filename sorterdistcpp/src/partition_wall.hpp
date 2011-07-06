@@ -9,6 +9,7 @@ namespace SorterThreadedHelper {
     public:
       PartitionWall(const double& pivot, const bool &isEnd);
       PartitionWall();
+      void set(const double &pivot, const bool &isEnd);
       friend bool operator< (const PartitionWall& l, const PartitionWall& r);
     private:
       bool isEnd_;
