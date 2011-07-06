@@ -41,7 +41,7 @@ namespace SorterThreadedHelper {
       size_t curSize();
 
       // Returns the sizes of all of the tasks.  
-    void taskSizes(std::vector<size_t> &sizes);
+      void taskSizes(std::vector<size_t> &sizes);
 
     private:
       size_t numTasks_;

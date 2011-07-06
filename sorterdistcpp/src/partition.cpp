@@ -110,7 +110,7 @@ namespace SorterThreadedHelper {
     return curTaskIt_->second->size();
   }
 
-  void Partition::taskSizes(std::vector<size_t> &sizes) {
+  void Partition::taskSizes(std::vector<size_t>& sizes) {
     // Fills a vector with the sizes of all the task stacks.
     sizes.resize(numTasks_);
     std::vector<size_t>::iterator sizeIt = sizes.begin();  
