@@ -24,6 +24,10 @@ namespace SorterThreadedHelper {
       void fill(std::vector<double>::const_iterator begin,
                 std::vector<double>::const_iterator end);
 
+      // Shifts the order in which the stacks are popped, but 
+      // not the order of the sizes returned by taskSizes.  
+      void shiftPopOrder(size_t shift);
+
       // Returns all of the values in the current task.  
       void popTask(std::vector<double>::iterator begin,
                    std::vector<double>::iterator end);

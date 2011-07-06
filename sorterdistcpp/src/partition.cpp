@@ -65,6 +65,21 @@ namespace SorterThreadedHelper {
     }
   }
 
+  void Partition::shiftPopOrder(size_t shift) {
+    shift = shift % numTasks_;
+    curTask_ += shift;
+    if (curTask_ >= numTasks_) {
+      curTask_ = curTask_ - numTasks_;
+      curTaskIt_ = partition_.begin();
+      size_t i = 0;
+      for (std::map<PartitionWall,std::stack<double>*>::iterator it = partition_.begin(); 
+           i < curTask_; it++, i++);
+    }
+    else {
+      for(size_t i = 0; i < shift; curTaskIt_++, i++);
+    }
+  }
+
   void Partition::popTask(std::vector<double>::iterator begin, 
                           std::vector<double>::iterator end) {
     // Fills the input vector with all of the values stored 
@@ -92,6 +107,10 @@ namespace SorterThreadedHelper {
     // Increment the task iterator.  
     ++curTaskIt_;
     ++curTask_;
+    if (curTaskIt_ == partition_.end()) {
+      curTaskIt_ = partition_.begin();
+      curTask_ = 0;
+    }
   }
 
   size_t Partition::numTasks() {
