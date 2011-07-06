@@ -52,8 +52,8 @@ namespace SorterThreadedHelper {
     }
   }     
 
-  void Partition::fillPartition(std::vector<double>::const_iterator chunkBegin,
-                                std::vector<double>::const_iterator chunkEnd) {
+  void Partition::fill(std::vector<double>::const_iterator chunkBegin,
+                       std::vector<double>::const_iterator chunkEnd) {
     // Fills the stacks of the partition from the chunk
     std::map<PartitionWall,std::stack<double>*>::iterator ub;
     for (std::vector<double>::const_iterator it = chunkBegin;

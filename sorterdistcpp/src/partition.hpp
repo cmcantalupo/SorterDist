@@ -21,8 +21,8 @@ namespace SorterThreadedHelper {
 
       // Pushes all of the values in a chunk onto the partition
       // stacks.
-      void fillPartition(std::vector<double>::const_iterator begin,
-                         std::vector<double>::const_iterator end);
+      void fill(std::vector<double>::const_iterator begin,
+                std::vector<double>::const_iterator end);
 
       // Returns all of the values in the current task.  
       void popTask(std::vector<double>::iterator begin,
