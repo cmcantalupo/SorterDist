@@ -2,7 +2,7 @@
 
 namespace SorterThreadedHelper {
 
-  Splinter::Splinter(std::vector<double>::const_iterator begin, std::vector<double>::const_iterator end) :
+  Splinter::Splinter(std::vector<double>::iterator begin, std::vector<double>::iterator end) :
     switchedOff_(false),
     begin_(begin),
     end_(end) {}
@@ -23,7 +23,7 @@ namespace SorterThreadedHelper {
   }
     
   void Splinter::getOffsets(const std::vector<size_t>& sizes, 
-                            std::vector<std::vector<double>::const_iterator>& chunks) {
+                            std::vector<std::vector<double>::iterator>& chunks) {
     // throw if sizes chunks and partitionEnds_ are not all the same size
     if (switchedOff_ == false) {
       for (size_t i = 1; i < partitionEnds_.size(); ++i) {
