@@ -24,10 +24,12 @@ Overview
   ----------------
 
     Sketched out the basic python interface.  Some work towards
-    implementing the threaded shared memory parallel sort in C++.  A
-    few methods are left to be filled in, and then a testing suite has
-    to be implemented.  Current design is for double data.  Need to
-    see how to implement it for python objects through BOOST.
+    implementing the threaded shared memory parallel sort in C++.
+    Begining to test the partition module.  This is used by the
+    partition_gang module which is still being designed. 
+
+    Current design is for double data.  Need to see how to implement
+    it for python objects through BOOST.
 
 ------
 Python
