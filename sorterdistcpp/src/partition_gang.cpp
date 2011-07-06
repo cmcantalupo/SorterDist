@@ -1,6 +1,9 @@
-#include "sorter_threaded.hpp"
 #include "partition_gang.hpp"
 #include "partition.hpp"
+#include "sorter_threaded_exception.hpp"
+#ifdef _OPENMP
+#include "openmp.h"
+#endif
 
 namespace SorterThreadedHelper {
 
@@ -10,8 +13,18 @@ namespace SorterThreadedHelper {
     resultBegin_(begin),
     resultEnd_(end),
     numThreads_(numThreads),
-    taskFactor_(taskFactor), 
-    numTasks_(numThreads*taskFactor) {
+    taskFactor_(taskFactor) {
+#ifndef _OPENMP
+    throw(SorterThreadedException::NoOpenMP);
+#endif
+
+    if (numThreads == -1) {
+#ifdef _OPENMP
+      numThreads_ = omp_get_max_num_threads();
+#endif
+    }
+    numTasks_ = numThreads_ * taskFactor_;
+
     std::vector<double>::iterator chunkBegin;
     std::vector<double>::iterator chunkEnd;
 
@@ -22,7 +35,7 @@ namespace SorterThreadedHelper {
       pivots_.insert(*it);
     }
     // Check that there were as many unique values as we need
-    if (pivots_.size() < numThreads_*taskFactor_ - 1) {
+    if (pivots_.size() < numThreads_ * taskFactor_ - 1) {
       throw(SorterThreadedException::TooFewPivots);
     }      
 
@@ -35,6 +48,7 @@ namespace SorterThreadedHelper {
       *it = new Partition(pivots_, chunkBegin, chunkEnd);
     }
   }
+
   PartitionGang::~PartitionGang() {
     // delete each of the partitions.  
     for (std::vector<Partition*>::iterator it = allPartitions_.begin();
@@ -42,6 +56,19 @@ namespace SorterThreadedHelper {
       delete *it;
     }
   }
+#if 0
+  PartitionGang::PartitionGang(const PartitionGang& other) {
+
+    /* FIX ME */
+    this->allPartitions_.resize(numThreads);
+    size_t i = 0;
+    for (std::vector<Partition*>::iterator it = allPartitions_.begin();  
+         it != allPartitions_.end(); ++it, ++i) {
+      chunk(numThreads, i, chunkBegin, chunkEnd);
+      *it = new Partition(pivots_, chunkBegin, chunkEnd);
+    }
+  }
+#endif
 
   void PartitionGang::fillPartitions() {    
     reducedSizes_.resize(numThreads_); 
@@ -52,7 +79,12 @@ namespace SorterThreadedHelper {
 #pragma omp parallel default (none) private (none) shared (allPartitions_, reducedSizes_) 
 {
     std::vector<size_t> mySizes(numThreads_);
-    int myThreadID = 0; //omp_get_thread_num();
+#ifdef _OPENMP
+    int myThreadID = omp_get_thread_num();
+#else
+    int myThreadID = 0;
+#endif
+
 
     allPartitions_[myThreadID]->fillPartition();
     for (size_t i = 0; i < numThreads_; ++i) {
@@ -61,7 +93,9 @@ namespace SorterThreadedHelper {
           reducedSizes_[j] += mySizes[j];
         }
       }
-      //omp_barrier();
+#ifdef _OPENMP
+      omp_barrier();
+#endif
     }
 } // end omp parallel
     for (size_t j = 1; j < numTasks_; ++j) {
@@ -73,12 +107,18 @@ namespace SorterThreadedHelper {
 #pragma omp parallel default (none) private (none) shared (allPartitions_, reducedSizes_) 
 {
     size_t task;
-    int threadID = 0; //omp_get_thread_num();
+#ifdef _OPENMP
+    int threadID = omp_get_thread_num();
+#else
+    int threadID = 0;
+#endif
     for (size_t i = 0; i < taskFactor_; ++i) {
       task = i * numThreads_ + threadID;
       allPartitions_[threadID]->popTask(resultBegin_ + reducedSizes_[task] - mySizes[task]);
       reducedSizes_[task] -= mySizes[task];
-      //omp_barrier();
+#ifdef _OPENMP
+      omp_barrier();
+#endif
     }
 }  
   }

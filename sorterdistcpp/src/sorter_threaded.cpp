@@ -3,7 +3,7 @@
 
 #include "sorter_threaded.hpp"
 #include "partition_gang.hpp"
-
+#include "sorter_threaded_exception.hpp"
 
 
 void SorterThreaded::sort(std::vector<double>::iterator begin, 
@@ -31,13 +31,14 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 
   try {
     SorterThreadedHelper::PartitionGang gang(begin, end, numThreads_, taskFactor_);
-    gang.fillPartitions();
-    gang.fillOutput();
-    gang.sortOutput();
+    gang.fill();
+    gang.pop();
+    gang.sort();
 
   }
   catch (SorterThreadedException& e) {
-    if(e.error == SorterThreadedException::TooFewPivots)
+    if(e.error == SorterThreadedException::TooFewPivots ||
+       e.error == SorterThreadedException::NoOpenMP)
       std::sort(begin, end);
     else
       throw(e);

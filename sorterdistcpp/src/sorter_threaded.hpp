@@ -17,12 +17,6 @@ class SorterThreaded {
     size_t numThreads_;
 };
 
-struct SorterThreadedException : std::exception {
-    enum Error {TooFewPivots};
-    inline SorterThreadedException(Error code) : error(code) {} 
-    const Error error;
-};
-
 
   // We need to break the input vector into nearly equal size chunks
   // for partitioning.  One chunk for each thread. 
