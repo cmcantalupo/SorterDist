@@ -11,13 +11,14 @@ namespace SorterThreadedHelper {
     // We will create a map between PartitionWalls and their associated stack.  
     std::pair<PartitionWall,std::stack<double>*> pp;
     for (std::set<double>::iterator it = pivots.begin(); it != pivots.end(); ++it) {
-      pp.first = PartitionWall::PartitionWall(*it,false);
+      
+      pp.first.set(*it,false);
       pp.second = new std::stack<double>;
       partition_.insert(pp);
     }
 
     // We need an extra PartitionWall for values that are greater than all the pivots.
-    pp.first = PartitionWall::PartitionWall(*pivots.begin(), true);
+    pp.first.set(*pivots.begin(), true);
     pp.second = new std::stack<double>;
     partition_.insert(pp);
     
@@ -56,9 +57,11 @@ namespace SorterThreadedHelper {
                        std::vector<double>::const_iterator chunkEnd) {
     // Fills the stacks of the partition from the chunk
     std::map<PartitionWall,std::stack<double>*>::iterator ub;
+    PartitionWall test;
     for (std::vector<double>::const_iterator it = chunkBegin;
          it != chunkEnd; ++it) {
-      ub = partition_.upper_bound(PartitionWall::PartitionWall(*it,false));
+      test.set(*it,false);
+      ub = partition_.upper_bound(test);
       // If we go off the end use the extra stack added to end.  
       if (ub == partition_.end()) --ub;
       ub->second->push(*it);
