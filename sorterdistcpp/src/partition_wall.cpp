@@ -1,4 +1,3 @@
-#include "sorter_threaded.hpp"
 #include "partition_wall.hpp"
 
 namespace SorterThreadedHelper {
@@ -11,6 +10,7 @@ namespace SorterThreadedHelper {
 
   bool operator< (const PartitionWall& l, const PartitionWall& r) {
     if (l.isEnd_) return false;
+    if (r.isEnd_) return true;
     else return l.pivot_ < r.pivot_;     
   }
 
