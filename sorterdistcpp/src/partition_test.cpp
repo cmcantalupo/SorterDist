@@ -17,24 +17,11 @@ int main(int argc, char **argv) {
   
 
   Partition part(pivots);
-  try {
-    part.fill(test.begin(), test.end());
-  }
-  catch(SorterThreadedException &e) {
-    std::cerr << "Partition::fill error SorterThreadedException: " << e.error << '\n';
-    return e.error;
-  }
+  part.fill(test.begin(), test.end());
 
   size_t numTasks = part.numTasks();
   std::vector<size_t> taskSizes(numTasks);
-
-  try {
-    part.taskSizes(taskSizes.begin(), taskSizes.end());
-  }
-  catch(SorterThreadedException &e) {
-    std::cerr << "Partition::taskSizes error SorterThreadedException: " << e.error << '\n';
-    return e.error;
-  }
+  part.taskSizes(taskSizes);
 
   std::vector<double> task(6);
 

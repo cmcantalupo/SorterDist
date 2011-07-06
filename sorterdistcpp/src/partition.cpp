@@ -110,16 +110,13 @@ namespace SorterThreadedHelper {
     return curTaskIt_->second->size();
   }
 
-
-  void Partition::taskSizes(std::vector<size_t>::iterator begin, 
-                            std::vector<size_t>::iterator end) {
-    // Fills a vector with the sizes of all the task stacks.  
+  void Partition::taskSizes(std::vector<size_t> &sizes) {
+    // Fills a vector with the sizes of all the task stacks.
+    sizes.resize(numTasks_);
+    std::vector<size_t>::iterator sizeIt = sizes.begin();  
     for (std::map<PartitionWall,std::stack<double>*>::iterator taskIt = partition_.begin();
-         taskIt != partition_.end() && begin != end; ++taskIt, ++begin) {      
-      *begin = taskIt->second->size();
-    }
-    if (begin != end) {
-      throw(SorterThreadedException::StackSizeVectorTooShort);
+         taskIt != partition_.end(); ++taskIt, ++sizeIt) {
+      *sizeIt = taskIt->second->size();
     }
   }
 
