@@ -1,41 +1,41 @@
-
+#include "splinter.hpp"
 
 namespace SorterThreadedHelper {
 
-  Splinter(std::vector<double>::iterator begin, std::vector<double>::iterator end) :
+  Splinter::Splinter(std::vector<double>::const_iterator begin, std::vector<double>::const_iterator end) :
     switchedOff_(false),
     begin_(begin),
     end_(end) {}
 
-  Splinter::addSizes(const std::vector<size_t>& sizes) {
+  void Splinter::addSizes(const std::vector<size_t>& sizes) {
     // throw if switchedOff_ == true
-    if (paritionEnds_.size() == 0 || 
-        partiionEnds_.size() != sizes.size()) {
-      partitionEnds = sizes;
+    if (partitionEnds_.size() == 0 || 
+        partitionEnds_.size() != sizes.size()) {
+      partitionEnds_ = sizes;
     }
     else {
-      std::vector<size_t>::iterator sizeIt = sizes.begin();
+      std::vector<size_t>::const_iterator sizeIt = sizes.begin();
       for(std::vector<size_t>::iterator partIt = partitionEnds_.begin();
-          partIt != partitionEnds_.end();
-          ++parIt, ++sizeIt) {
-	*parIt += *sizeIt;
+          partIt != partitionEnds_.end(); ++partIt, ++sizeIt) {
+	    *partIt += *sizeIt;
       }
-    }
-    
-    Splinter::getOffsets(const std::vector<size_t>& sizes, 
-                         vector<std::vector<double>::iterator> &chunks) {
-      // throw if sizes chunks and partitionEnds_ are not all the same size
-      if (switchedOff_ == false) {
-        for (size_t i = 1; i < partitionEnds_.size(); ++i) {
-          partitionEnds_[i] += partitionEnds_[i-1]; 
-        }
-        switchedOff_ = true;
-      }
-
-      size_t n = partitionEnds_.size();
-      for (size_t i = 0; i < n; ++i) {
-        partitionEnds_[i] -= sizes[i];
-        chunks[i] = begin_ + partitionEnds_[i];
-      }      
     }
   }
+    
+  void Splinter::getOffsets(const std::vector<size_t>& sizes, 
+                            std::vector<std::vector<double>::const_iterator>& chunks) {
+    // throw if sizes chunks and partitionEnds_ are not all the same size
+    if (switchedOff_ == false) {
+      for (size_t i = 1; i < partitionEnds_.size(); ++i) {
+	partitionEnds_[i] += partitionEnds_[i-1];
+      }
+      switchedOff_ = true;
+    }
+
+    size_t n = partitionEnds_.size();
+    for (size_t i = 0; i < n; ++i) {
+      partitionEnds_[i] -= sizes[i];
+      chunks[i] = begin_ + partitionEnds_[i];
+    }
+  }
+}
