@@ -3,10 +3,10 @@ AR=ar
 RANLIB=ranlib
 CFLAGS=-O3 -fpic
 
-all : partition.o partition_wall.o partition_test.o partition_test splinter.o sorter_threaded.o 
+all : partition.o partition_wall.o partition_test.o partition_test splinter.o splinter_test sorter_threaded.o 
 
 clean :
-	rm -f partition.o partition_wall.o partition_test.o partition_test splinter.o sorter_threaded.o
+	rm -f partition.o partition_wall.o partition_test.o partition_test splinter.o splinter_test sorter_threaded.o
 
 partition_wall.o : src/partition_wall.cpp src/partition_wall.hpp src/sorter_threaded_exception.hpp
 	${CC} ${CFLAGS} -c src/partition_wall.cpp
@@ -21,6 +21,11 @@ partition_test : partition_test.o partition_wall.o partition.o
 
 splinter.o : src/splinter.cpp src/splinter.hpp
 	${CC} ${CFLAGS} -c src/splinter.cpp 
+
+splinter_test : splinter.o 
+	${CC} ${CFLAGS} -c src/splinter_test.cpp
+	${CC} ${CFLAGS} splinter.o splinter_test.o -o splinter_test 
+	./splinter_test
 
 sorter_threaded.o : src/sorter_threaded.cpp src/sorter_threaded.hpp src/sorter_threaded_exception.hpp
 	${CC} ${CFLAGS} -c src/sorter_threaded.cpp -D _OPENMP
