@@ -6,7 +6,7 @@ CFLAGS=-O3 -fpic
 all : partition.o partition_wall.o partition_test.o partition_test splinter.o splinter_test sorter_threaded.o sorter_threaded_test
 
 clean :
-	rm -f partition.o partition_wall.o partition_test.o partition_test splinter.o splinter_test sorter_threaded.o sorter_threaded_test
+	rm -f partition.o partition_wall.o partition_test.o partition_test splinter.o splinter_test.o splinter_test sorter_threaded.o sorter_threaded_test.o sorter_threaded_test 
 
 partition_wall.o : src/partition_wall.cpp src/partition_wall.hpp src/sorter_threaded_exception.hpp
 	${CC} ${CFLAGS} -c src/partition_wall.cpp
