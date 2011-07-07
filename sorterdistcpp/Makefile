@@ -1,4 +1,4 @@
-# CC=g++
+CC=g++
 AR=ar
 RANLIB=ranlib
 CFLAGS=-O3 -fpic
