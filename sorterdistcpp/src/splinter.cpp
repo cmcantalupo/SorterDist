@@ -40,12 +40,12 @@ namespace SorterThreadedHelper {
   }
   
   void Splinter::even(size_t num, std::vector<std::vector<double>::iterator>& chunks) {
-    chunks.resize(num);
+    chunks.resize(num + 1);
     size_t chunkSize = distance(begin_, end_) / num + 1;
     size_t slop = distance(begin_, end_) % num;
 
     std::vector<double>::iterator it = begin_;
-    for (size_t i = 0; i < num; ++i) {
+    for (size_t i = 0; i <= num; ++i) {
       if (i == slop) {
         --chunkSize;
       }
