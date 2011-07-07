@@ -33,10 +33,12 @@ namespace SorterThreadedHelper {
     }
 
     size_t n = partitionEnds_.size();
+    chunks.resize(n+1);
     for (size_t i = 0; i < n; ++i) {
       partitionEnds_[i] -= sizes[i];
       chunks[i] = begin_ + partitionEnds_[i];
     }
+    chunks[n] = end_;
   }
   
   void Splinter::even(size_t num, std::vector<std::vector<double>::iterator>& chunks) {
