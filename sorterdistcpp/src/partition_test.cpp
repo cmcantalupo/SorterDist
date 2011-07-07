@@ -5,36 +5,24 @@
 
 using namespace SorterThreadedHelper;
 
-PartitionTest::PartitionTest(const std::vector<double>& test, const std::set<double>& pivots) : 
-  testVec_(test),
-  testPivots_(pivots) {}
+PartitionTest::PartitionTest() {} 
 
-Permute18::Permute18() {
+Permute18Test::Permute18Test() {
   const int testArr[] = {7, 15, 13, 17, 2, 10, 12, 3, 14, 
                            9, 0, 8, 1, 11, 16, 6, 5, 4};
   const int pivotsArr[] = {6, 12};
   size_t arrLen = sizeof(testArr) / sizeof(testArr[0]);
-  vec_.resize(arrLen);
+  testVec_.resize(arrLen);
   for (size_t i = 0; i < arrLen; ++i) {
-    vec_[i] = testArr[i];
+    testVec_[i] = testArr[i];
   }
 
   size_t pivLen = sizeof(pivotsArr) / sizeof(pivotsArr[0]);
   for (size_t i = 0; i < pivLen; ++i) {
-    piv_.insert(pivotsArr[i]);
+    testPivots_.insert(pivotsArr[i]);
   }
-  assert(piv_.size() == pivLen);
+  assert(testPivots_.size() == pivLen);
 }
-
-std::vector<double> Permute18::getVec() {
-  return vec_;
-}
-std::set<double> Permute18::getPiv() {
-  return piv_;
-}
-
-
-Permute18Test::Permute18Test() : Permute18(), PartitionTest(getVec(), getPiv()) {}
 
 int Permute18Test::run() {
   Partition part(testPivots_);
