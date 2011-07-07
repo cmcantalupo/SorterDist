@@ -3,7 +3,6 @@
 #include <vector>
 
 namespace SorterThreadedHelper {
-  //
   class Splinter {
     public:
       Splinter(std::vector<double>::iterator begin, std::vector<double>::iterator end);
