@@ -35,5 +35,4 @@ int main(int argc, char **argv) {
       if (i == 2) assert(12 <= task[j]);
     }
   }
-
 }
