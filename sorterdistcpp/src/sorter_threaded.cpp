@@ -10,6 +10,7 @@
 #include "partition.hpp"
 #include "splinter.hpp"
 #include "sorter_threaded_exception.hpp"
+#include "quick_sort.hpp"
 
 using namespace SorterThreadedHelper;
 
@@ -39,19 +40,14 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 #ifndef _OPENMP
   std::sort(begin, end);
 #else
-  int numThreads;
-#pragma omp parallel shared (numThreads)
-{
-  numThreads = omp_get_num_threads();
-}
+  int numThreads = omp_get_max_threads();
+
   if (maxThreads_ != -1 && maxThreads_ < numThreads) {
     numThreads = maxThreads_;
   }
-  std::cout << "numThreads = " << numThreads << "\n";
-
   int numTasks = numThreads * taskFactor_;
-  std::set<double> pivots;
 
+  std::set<double> pivots;
   // Create a set of pivots by going through the vector    
   for (std::vector<double>::iterator it = begin;
        it != end && pivots.size() < numThreads*taskFactor_ - 1;
@@ -60,11 +56,11 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
   // Check that there were as many unique values as we need
   if (pivots.size() < numThreads * taskFactor_ - 1) {
-    std::sort(begin, end);
+    quick_sort(begin, end);
     return;
   }
   
-  Splinter splinter(begin, end);
+  Splinter splinter(begin, end, numTasks);
   std::vector<std::vector<double>::iterator> chunks;
 
   splinter.even(numThreads, chunks);
@@ -105,14 +101,15 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 
 #pragma omp parallel for schedule (dynamic)
   for (int i = 0; i < numTasks - 1; ++i) {
-    std::sort(taskOffsets[i], taskOffsets[i+1]);
+    quick_sort(taskOffsets[i], taskOffsets[i+1]);
   }
 #pragma omp critical
 {
   if (taskOffsets[numTasks-1] != end) {
-    std::sort(taskOffsets[numTasks - 1], end);
+    quick_sort(taskOffsets[numTasks - 1], end);
   }
 } //end omp critical region
+#pragma omp barrier
 } //end omp parallel region
 #endif
 }
