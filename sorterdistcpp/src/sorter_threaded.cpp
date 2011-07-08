@@ -64,8 +64,8 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 
   splinter.even(numThreads_, chunks);
 
-  std::vector<std::vector<double>::iterator> taskOffsets;
-#pragma omp parallel default (none) private (none) shared (splinter, chunks, taskOffsets)
+  std::vector<std::vector<double>::iterator> taskOffsets(numTasks);
+#pragma omp parallel default (shared) private (none) shared (splinter, chunks, taskOffsets, pivots, numThreads_)
 {
   int threadID = omp_get_thread_num();
   Partition partition(pivots);
@@ -94,8 +94,12 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 
   if (threadID == numThreads_ - 1) {
-    taskOffsets = offsets;
+    // cannot use vector assignment otherwise taskOffsets' data is no longer shared
+    for (size_t i = 0; i < numTasks; ++i) {
+      taskOffsets[i] = offsets[i];
+    }
   }
+#pragma omp barrier
 
 #pragma omp parallel for schedule (dynamic)
   for (size_t i = 0; i < numTasks - 1; ++i) {
@@ -103,7 +107,9 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 #pragma omp critical
 {
-  std::sort(taskOffsets[numTasks - 1], end);
+  if (taskOffsets[numTasks-1] != end) {
+    std::sort(taskOffsets[numTasks - 1], end);
+  }
 } //end omp critical region
 } //end omp parallel region
 #endif
