@@ -63,14 +63,14 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   std::vector<Partition*> allPartitions(numThreads_);
   std::vector<std::vector<double>::iterator> chunks;
 
-  size_t i = 0;
   for (std::vector<Partition*>::iterator it = allPartitions.begin();
-       it != allPartitions.end(); ++it, ++i) {
+       it != allPartitions.end(); ++it) {
     *it = new Partition(pivots);
   }
 
   splinter.even(numThreads_, chunks);
 
+  std::vector<std::vector<double>::iterator> taskOffsets;
 #pragma omp parallel default (none) private (none) shared (allPartitions, splinter, chunks, taskOffsets)
 {
   int threadID = omp_get_thread_num();
@@ -98,7 +98,6 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
     allPartitions[threadID]->popTask(offsets[i]);
   }
 
-  std::vector<std::vector<double>::iterator> taskOffsets;
   if (threadID == numThreads_ - 1) {
     taskOffsets = offsets;
   }
@@ -107,7 +106,10 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   for (size_t i = 0; i < numTasks - 1; ++i) {
     std::sort(taskOffsets[i], taskOffsets[i+1]);
   }
-  std::sort(taskOffsets[numTasks-1], end);
+#pragma omp critical
+{
+  std::sort(taskOffsets[numTasks - 1], end);
+} //end omp critical region
 } //end omp parallel region
 #endif
 }
