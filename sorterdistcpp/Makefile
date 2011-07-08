@@ -1,9 +1,7 @@
-CC=CC
-LD=CC
-#AR=ar
-#RANLIB=ranlib
-CPPFLAGS=-O3 -fpic -D_OPENMP
-#LDFLAGS=-lgomp
+CC=g++
+LD=g++
+CPPFLAGS=-O3 -fpic -fopenmp
+LDFLAGS=-fopenmp
 all : partition.o partition_wall.o splinter.o sorter_threaded.o
 
 clean :
