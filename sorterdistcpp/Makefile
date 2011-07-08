@@ -14,7 +14,7 @@ partition_wall.o : src/partition_wall.cpp src/partition_wall.hpp src/sorter_thre
 	${CC} ${CFLAGS} partition_wall_test.o partition_wall.o -o partition_wall_test
 	./partition_wall_test
 
-partition.o : partition_wall.o src/partition.cpp src/partition.hpp src/sorter_threaded_exception.hpp src/partition_test.cpp src/partition_test.hpp 
+partition.o : partition_wall.o src/partition.cpp src/partition.hpp src/sorter_threaded_exception.hpp src/partition_test.cpp
 	${CC} ${CFLAGS} -c src/partition.cpp 
 	${CC} ${CFLAGS} -c src/partition_test.cpp
 	${CC} ${CFLAGS} partition_test.o partition_wall.o partition.o -o partition_test
