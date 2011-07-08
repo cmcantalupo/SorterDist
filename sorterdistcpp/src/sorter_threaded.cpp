@@ -79,7 +79,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   std::vector<size_t> mySizes;
   partition.taskSizes(mySizes);
 
-  for (int i = 0; i < numThreads_; ++i) {
+  for (int i = 0; i < numThreads; ++i) {
     if (i == threadID) {
       splinter.addSizes(mySizes);
     }
@@ -87,7 +87,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 
   std::vector<std::vector<double>::iterator> offsets;
-  for (int i = 0; i < numThreads_; ++i) {
+  for (int i = 0; i < numThreads; ++i) {
     if (i == threadID) {
       splinter.getOffsets(mySizes, offsets);
     }
