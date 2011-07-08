@@ -95,7 +95,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
   
   for (size_t i = 0; i < numTasks; ++i) {
-    allPartitions[threadID]->popTask(offsets[i], offsets[i+1]);
+    allPartitions[threadID]->popTask(offsets[i]);
   }
 
   std::vector<std::vector<double>::iterator> taskOffsets;
@@ -104,11 +104,12 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 
 #pragma omp parallel for schedule (dynamic)
-  for (size_t i = 0; i < numTasks; ++i) {
+  for (size_t i = 0; i < numTasks - 1; ++i) {
     std::sort(taskOffsets[i], taskOffsets[i+1]);
   }
-#endif
+  std::sort(taskOffsets[numTasks-1], end);
 } //end omp parallel region
+#endif
 }
 
 SorterThreaded::SorterThreaded(int taskFactor, int numThreads) :
