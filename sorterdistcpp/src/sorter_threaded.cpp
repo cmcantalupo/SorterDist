@@ -69,10 +69,10 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 {
   int threadID = omp_get_thread_num();
   Partition partition(pivots);
-  partitions.fill(chunks[threadID], chunks[threadID+1]);
+  partition.fill(chunks[threadID], chunks[threadID+1]);
 #pragma  omp barrier;
   std::vector<size_t> mySizes;
-  partitions.taskSizes(mySizes);
+  partition.taskSizes(mySizes);
 
   for (size_t i = 0; i < numThreads_; ++i) {
     if (i == threadID) {
@@ -90,7 +90,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
   
   for (size_t i = 0; i < numTasks; ++i) {
-    partitions.popTask(offsets[i]);
+    partition.popTask(offsets[i]);
   }
 
   if (threadID == numThreads_ - 1) {
