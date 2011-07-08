@@ -79,7 +79,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   std::vector<size_t> mySizes;
   partition.taskSizes(mySizes);
 
-  for (size_t i = 0; i < numThreads; ++i) {
+  for (int i = 0; i < numThreads_; ++i) {
     if (i == threadID) {
       splinter.addSizes(mySizes);
     }
@@ -87,14 +87,14 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 
   std::vector<std::vector<double>::iterator> offsets;
-  for (size_t i = 0; i < numThreads; ++i) {
+  for (int i = 0; i < numThreads_; ++i) {
     if (i == threadID) {
       splinter.getOffsets(mySizes, offsets);
     }
 #pragma omp barrier
   }
   
-  for (size_t i = 0; i < numTasks; ++i) {
+  for (int i = 0; i < numTasks; ++i) {
     partition.popTask(offsets[i]);
   }
 
@@ -104,7 +104,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 #pragma omp barrier
 
 #pragma omp parallel for schedule (dynamic)
-  for (size_t i = 0; i < numTasks - 1; ++i) {
+  for (int i = 0; i < numTasks - 1; ++i) {
     std::sort(taskOffsets[i], taskOffsets[i+1]);
   }
 #pragma omp critical
