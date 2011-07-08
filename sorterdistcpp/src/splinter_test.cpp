@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     testVec[i] = static_cast<double>(i);
   }
   
-  Splinter sp(testVec.begin(), testVec.end());
+  Splinter sp(testVec.begin(), testVec.end(), 3);
   std::vector<std::vector<double>::iterator> chunks;
   sp.even(numChunk, chunks);
   assert(chunks.size() == numChunk + 1);
