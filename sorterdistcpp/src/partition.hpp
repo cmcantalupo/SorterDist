@@ -25,8 +25,7 @@ namespace SorterThreadedHelper {
                 std::vector<double>::const_iterator end);
 
       // Returns all of the values in the current task.  
-      void popTask(std::vector<double>::iterator begin,
-                   std::vector<double>::iterator end);
+      void popTask(std::vector<double>::iterator begin);
 
       // Returns the number of tasks (the size of the original pivot
       // set plus one).

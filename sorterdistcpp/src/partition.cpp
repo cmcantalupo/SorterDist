@@ -68,29 +68,14 @@ namespace SorterThreadedHelper {
     }
   }
 
-  void Partition::popTask(std::vector<double>::iterator begin, 
-                          std::vector<double>::iterator end) {
+  void Partition::popTask(std::vector<double>::iterator begin) {
     // Fills the input vector with all of the values stored 
     // in the stack pointed to by curTaskIt_;
-    if (curTaskIt_ == partition_.end()) {
-      throw(SorterThreadedException::PopEmptyPartition);
-    }
-
     std::vector<double>::iterator it(begin);
     while (!curTaskIt_->second->empty()) {
-      // Throw an exception if we get to the end iterator before we
-      // pop the entire stack.
-      if (it == end) {
-        throw(SorterThreadedException::TaskTooLong);
-      }
       *it = curTaskIt_->second->top();
       curTaskIt_->second->pop();
       ++it;
-    }
-    // Throw an exception if we didn't fill the entire range 
-    // of the output.  
-    if (it != end) {
-      throw(SorterThreadedException::TaskTooShort);
     }
     // Increment the task iterator.  
     ++curTaskIt_;

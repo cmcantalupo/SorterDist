@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
   std::set<double>::iterator pivIt = pivots.begin();
   for (int i = 0; i < numTasks; ++i) {
     assert(i == part.curTask());
-    part.popTask(task.begin(), task.begin() + part.curSize());
+    part.popTask(task.begin());
     for (int j = 0; j < taskSizes[i]; j++ ) {
       if (i != numPivots)
         assert(task[j] < *pivIt);
