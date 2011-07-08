@@ -16,17 +16,20 @@ Overview
   distributed systems.
 
   The C++ will serve as a fast engine for the basic functionality of
-  the library.  SorterThread and SorterDistMPI will be implemented in
+  the library.  SorterThreaded and SorterDistMPI will be implemented in
   C++ with BOOST bindings for Python.  There will be a native Sorter
   and SorterDist base class in both Python and C++.
 
   - Current state
   ----------------
 
-    Sketched out the basic python interface.  Some work towards
-    implementing the threaded shared memory parallel sort in C++.
-    Begining to test the partition module.  This is used by the
-    partition_gang module which is still being designed. 
+    Sketched out the basic python interface.  
+
+    Some work towards implementing the threaded shared memory parallel
+    sort in C++: SorterThreaded.  The testing suite needs to be made
+    more robust, and complete.  There is definitely something wrong
+    with the implementation, and more testing will reveal the problem, 
+    but the basic design is in place.  
 
     Current design is for double data.  Need to see how to implement
     it for python objects through BOOST.
@@ -43,7 +46,7 @@ Python
     A low memory high performance base class holds a sequence of data
     and information about how to compare the data elements.  
 
-    SorterThread
+    SorterThreaded
 
     Adds shared memory multi-threading to Sorter.  
 
@@ -66,7 +69,7 @@ Python
 
     MPI parallel sorter for distributed sorting functionality in a
     tightly coupled parallel environment. Implemented in C++.  Derived
-    from SorterDist and SorterThread classes.
+    from SorterDist and SorterThreaded classes.
 
   + SorterDistAMQP
 
@@ -97,10 +100,9 @@ C++
     Pure virtual base class which holds the data and the comparison
     function.
 
-  + SorterThread
+  + SorterThreaded
 
-    Class for threaded parallel sorting.  Will be a subclass of
-    Sorter.  Will be done with OpenMP pragmas.
+    Class for threaded parallel sorting.  Parallelism through OpenMP.
 
   + SorterDist
 
