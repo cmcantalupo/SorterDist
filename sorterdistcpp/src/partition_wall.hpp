@@ -7,9 +7,9 @@ namespace SorterThreadedHelper {
 
   class PartitionWall {
     public:
-      PartitionWall(const double& pivot, const bool &isEnd);
+      PartitionWall(const double& pivot, const bool &isEnd = false);
       PartitionWall();
-      void set(const double &pivot, const bool &isEnd);
+      void set(const double &pivot, const bool &isEnd = false);
       friend bool operator< (const PartitionWall& l, const PartitionWall& r);
     private:
       bool isEnd_;
