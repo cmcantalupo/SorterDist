@@ -24,11 +24,13 @@ splinter.o : src/splinter.cpp src/splinter.hpp src/sorter_threaded_exception.hpp
 	${CC} ${CPPFLAGS} -c src/splinter_test.cpp
 	${LD} ${LDFLAGS} splinter_test.o splinter.o -o splinter_test 
 	./splinter_test
+quick_sort.o : src/quick_sort.cpp src/quick_sort.hpp
+	${CC} ${CPPFLAGS} -c src/quick_sort.cpp
 
-sorter_threaded.o : partition.o partition_wall.o splinter.o src/sorter_threaded.cpp src/sorter_threaded.hpp src/sorter_threaded_exception.hpp src/sorter_threaded_test.cpp
+sorter_threaded.o : partition.o partition_wall.o splinter.o quick_sort.o src/sorter_threaded.cpp src/sorter_threaded.hpp src/sorter_threaded_exception.hpp src/sorter_threaded_test.cpp
 	${CC} ${CPPFLAGS} -c src/sorter_threaded.cpp
 	${CC} ${CPPFLAGS} -c src/sorter_threaded_test.cpp
-	${LD} ${LDFLAGS} sorter_threaded_test.o sorter_threaded.o splinter.o partition_wall.o partition.o -o sorter_threaded_test
+	${LD} ${LDFLAGS} sorter_threaded_test.o sorter_threaded.o splinter.o partition_wall.o partition.o quick_sort.o -o sorter_threaded_test
 	./sorter_threaded_test
 
 
