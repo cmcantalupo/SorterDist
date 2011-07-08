@@ -3,11 +3,9 @@
 
 struct SorterThreadedException : std::exception {
   enum Error {TooFewPivots = 1, 
-              NoOpenMP = 2,
-              PopEmptyPartition = 3, 
-              TaskTooShort = 4, 
-              TaskTooLong = 5, 
-              StackSizeVectorTooShort = 6};
+              NoOpenMP = 2, 
+              SplinterOrder = 3,
+              SplinterSize = 4};
   inline SorterThreadedException(Error code) : error(code) {} 
   const Error error;
 };
