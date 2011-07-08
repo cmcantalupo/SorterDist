@@ -1,9 +1,10 @@
 #include "sorter_threaded.hpp"
 #include <algorithm>
 #include <assert.h>
+#include <fstream>
 
 int main(int argc, char **argv) {
-  size_t testSize = 100000;
+  size_t testSize = 10000;
   std::vector<double> orderedVector(testSize);
   SorterThreaded st;
   
@@ -15,7 +16,7 @@ int main(int argc, char **argv) {
   random_shuffle(testVector.begin(), testVector.end());
   
   st.sort(testVector.begin(), testVector.end());
-  
+
   assert(testVector == orderedVector);
     
 }
