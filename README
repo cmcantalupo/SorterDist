@@ -9,6 +9,9 @@ Will implement OpenMP, MPI, cURL and AMQP network protocols.
 Overview
 --------
 
+  The functionality for non-mpi sorts is likley better done with 
+  a Map/Reduce framework like Hadoop.  
+
   Will provide a framework for distributed data computing which is
   centered around the power of distributed sorting.  The python
   interface will give access to the fast native C++ functionality and
@@ -27,9 +30,7 @@ Overview
 
     Some work towards implementing the threaded shared memory parallel
     sort in C++: SorterThreaded.  The testing suite needs to be made
-    more robust, and complete.  There is definitely something wrong
-    with the implementation, and more testing will reveal the problem, 
-    but the basic design is in place.  
+    more robust.  Current test suite passes with two threads.   
 
     Current design is for double data.  Need to see how to implement
     it for python objects through BOOST.
