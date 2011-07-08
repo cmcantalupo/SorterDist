@@ -14,7 +14,7 @@ class SorterThreaded {
   private:
     int taskFactor_;
     // If numThreads_ == -1 then omp_max_num_threads will be used
-    int numThreads_;
+    int maxThreads_;
 };
 
 
