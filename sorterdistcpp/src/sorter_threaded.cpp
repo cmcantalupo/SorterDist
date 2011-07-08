@@ -3,7 +3,8 @@
 
 #include <algorithm>
 #ifdef _OPENMP
-#include "omp.h"
+#include <omp.h>
+#include <iostream>
 #endif
 #include "sorter_threaded.hpp"
 #include "partition.hpp"
@@ -46,10 +47,9 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   if (maxThreads_ != -1 && maxThreads_ < numThreads) {
     numThreads = maxThreads_;
   }
+  std::cout << "numThreads = " << numThreads << "\n";
 
   size_t numTasks = numThreads * taskFactor_;
-  std::vector<double>::iterator chunkBegin;
-  std::vector<double>::iterator chunkEnd;
   std::set<double> pivots;
 
   // Create a set of pivots by going through the vector    
@@ -75,7 +75,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   int threadID = omp_get_thread_num();
   Partition partition(pivots);
   partition.fill(chunks[threadID], chunks[threadID+1]);
-#pragma  omp barrier;
+#pragma  omp barrier
   std::vector<size_t> mySizes;
   partition.taskSizes(mySizes);
 
