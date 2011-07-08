@@ -38,23 +38,28 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 #ifndef _OPENMP
   std::sort(begin, end);
 #else
-  if (numThreads_ == -1) {
-    numThreads_ = omp_get_max_threads();
+  int numThreads;
+#pragma omp parallel shared (numThreads)
+{
+  numThreads = omp_get_num_threads();
+}
+  if (maxThreads_ != -1 && maxThreads_ < numThreads) {
+    numThreads = maxThreads_;
   }
 
-  size_t numTasks = numThreads_ * taskFactor_;
+  size_t numTasks = numThreads * taskFactor_;
   std::vector<double>::iterator chunkBegin;
   std::vector<double>::iterator chunkEnd;
   std::set<double> pivots;
 
   // Create a set of pivots by going through the vector    
   for (std::vector<double>::iterator it = begin;
-       it != end && pivots.size() < numThreads_*taskFactor_ - 1;
+       it != end && pivots.size() < numThreads*taskFactor_ - 1;
        ++it) {
       pivots.insert(*it);
   }
   // Check that there were as many unique values as we need
-  if (pivots.size() < numThreads_ * taskFactor_ - 1) {
+  if (pivots.size() < numThreads * taskFactor_ - 1) {
     std::sort(begin, end);
     return;
   }
@@ -62,10 +67,10 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   Splinter splinter(begin, end);
   std::vector<std::vector<double>::iterator> chunks;
 
-  splinter.even(numThreads_, chunks);
+  splinter.even(numThreads, chunks);
 
   std::vector<std::vector<double>::iterator> taskOffsets(numTasks);
-#pragma omp parallel default (shared) private (none) shared (splinter, chunks, taskOffsets, pivots, numThreads_)
+#pragma omp parallel default (shared) 
 {
   int threadID = omp_get_thread_num();
   Partition partition(pivots);
@@ -74,7 +79,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   std::vector<size_t> mySizes;
   partition.taskSizes(mySizes);
 
-  for (size_t i = 0; i < numThreads_; ++i) {
+  for (size_t i = 0; i < numThreads; ++i) {
     if (i == threadID) {
       splinter.addSizes(mySizes);
     }
@@ -82,7 +87,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 
   std::vector<std::vector<double>::iterator> offsets;
-  for (size_t i = 0; i < numThreads_; ++i) {
+  for (size_t i = 0; i < numThreads; ++i) {
     if (i == threadID) {
       splinter.getOffsets(mySizes, offsets);
     }
@@ -93,11 +98,8 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
     partition.popTask(offsets[i]);
   }
 
-  if (threadID == numThreads_ - 1) {
-    // cannot use vector assignment otherwise taskOffsets' data is no longer shared
-    for (size_t i = 0; i < numTasks; ++i) {
-      taskOffsets[i] = offsets[i];
-    }
+  if (threadID == numThreads - 1) {
+    taskOffsets = offsets;
   }
 #pragma omp barrier
 
@@ -117,7 +119,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 
 SorterThreaded::SorterThreaded(int taskFactor, int numThreads) :
   taskFactor_(taskFactor), 
-  numThreads_(numThreads) {}
+  maxThreads_(numThreads) {}
 
 
                                 
