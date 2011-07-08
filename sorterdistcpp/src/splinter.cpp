@@ -1,24 +1,31 @@
 #include "splinter.hpp"
+#include "sorter_threaded_exception.hpp"
 
 namespace SorterThreadedHelper {
 
-  Splinter::Splinter(std::vector<double>::iterator begin, std::vector<double>::iterator end) :
+  Splinter::Splinter(std::vector<double>::iterator begin, std::vector<double>::iterator end, int numTasks) :
     switchedOff_(false),
     begin_(begin),
-    end_(end) {}
+    end_(end),
+    partitionEnds_(numTasks) {
+    for (std::vector<size_t>::iterator it = partitionEnds_.begin();
+         it != partitionEnds_.end(); ++it) {
+      *it = 0;
+    }
+  }
 
   void Splinter::addSizes(const std::vector<size_t>& sizes) {
-    // throw if switchedOff_ == true
-    if (partitionEnds_.size() == 0 || 
-        partitionEnds_.size() != sizes.size()) {
-      partitionEnds_ = sizes;
+    if (switchedOff_ == true) {
+      throw(SorterThreadedException::SplinterOrder);
     }
-    else {
-      std::vector<size_t>::const_iterator sizeIt = sizes.begin();
-      for(std::vector<size_t>::iterator partIt = partitionEnds_.begin();
-          partIt != partitionEnds_.end(); ++partIt, ++sizeIt) {
-	    *partIt += *sizeIt;
-      }
+    if (sizes.size() != partitionEnds_.size()) {
+      throw(SorterThreadedException::SplinterSize);
+    }
+
+    std::vector<size_t>::const_iterator sizeIt = sizes.begin();
+    for(std::vector<size_t>::iterator partIt = partitionEnds_.begin();
+	partIt != partitionEnds_.end(); ++partIt, ++sizeIt) {
+      *partIt += *sizeIt;
     }
   }
     
