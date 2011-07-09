@@ -12,7 +12,6 @@
 #include "sorter_threaded_exception.hpp"
 #include "quick_sort.hpp"
 
-using namespace SorterThreadedHelper;
 
 void SorterThreaded::sort(std::vector<double>::iterator begin, 
                           std::vector<double>::iterator end) {
@@ -61,11 +60,11 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
   // Check that there were as many unique values as we need
   if (pivots.size() < numThreads * taskFactor_ - 1) {
-    quick_sort(begin, end);
+    SorterThreadedHelper::quick_sort(begin, end);
     return;
   }
   
-  Splinter splinter(begin, end, numTasks);
+  SorterThreadedHelper::Splinter splinter(begin, end, numTasks);
   std::vector<std::vector<double>::iterator> chunks;
 
   splinter.even(numThreads, chunks);
@@ -74,7 +73,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 #pragma omp parallel default (shared) 
 {
   int threadID = omp_get_thread_num();
-  Partition partition(pivots);
+  SorterThreadedHelper::Partition partition(pivots);
   partition.fill(chunks[threadID], chunks[threadID+1]);
 #pragma  omp barrier
   std::vector<size_t> mySizes;
@@ -106,23 +105,28 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 
 #pragma omp parallel for schedule (dynamic)
   for (int i = 0; i < numTasks - 1; ++i) {
-    quick_sort(taskOffsets[i], taskOffsets[i+1]);
+    SorterThreadedHelper::quick_sort(taskOffsets[i], taskOffsets[i+1]);
   }
 #pragma omp critical
 {
-  if (taskOffsets[numTasks-1] != end) {
-    quick_sort(taskOffsets[numTasks - 1], end);
-  }
+  SorterThreadedHelper::quick_sort(taskOffsets[numTasks - 1], end);
 } //end omp critical region
 #pragma omp barrier
 } //end omp parallel region
 #endif
 }
 
-SorterThreaded::SorterThreaded(int taskFactor, int numThreads) :
+SorterThreaded::SorterThreaded(int taskFactor, int maxThreads) :
   taskFactor_(taskFactor), 
-  maxThreads_(numThreads) {}
+  maxThreads_(maxThreads) {}
 
+void SorterThreaded::setMaxThreads(int maxThreads) {
+  maxThreads_ = maxThreads;
+}
+
+void SorterThreaded::setTaskFactor(int taskFactor) {
+  taskFactor_ = taskFactor;
+}
 
                                 
 

@@ -3,7 +3,7 @@
 
 
 int main(int argc, char **argv) {
-  size_t testSize = 1000000;
+  size_t testSize = 10000;
   std::vector<double> orderedVector(testSize);
   SorterThreaded st;
   
