@@ -42,6 +42,11 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 #else
   int numThreads = omp_get_max_threads();
 
+  if (numThreads == 1) {
+    std::sort(begin,end);
+    return;
+  }
+
   if (maxThreads_ != -1 && maxThreads_ < numThreads) {
     numThreads = maxThreads_;
   }
