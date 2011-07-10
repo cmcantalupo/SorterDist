@@ -25,6 +25,18 @@ determines how many threaded tasks the sort will be broken up into.
 The number of tasks is taskFactor times the number of threads.  The
 default for taskFactor is 8.
 
+profile_sort
+------------
+
+profile_sort is an executable which will run the sort once for one
+through OMP_NUM_THREADS (environment variable) threads, and produce a
+profile file in the directory m3_profile.  This application uses
+M3_profile.c which is a C code that is compiled separately from the
+sorter_threaded library and which has been borrowed from the M3 cmb
+data analysis package.  There are two optional command line arguments.  
+The first is the number of elements in the vector to be sorted.  The
+second is the "taskFactor."
+
 Compile options
 ---------------
 
@@ -44,13 +56,6 @@ make tidy:
 Removes .o files that comprise libsorter_threaded.a and unit tests.   
 
 libsorter_threaded.a is the main library. 
-
-profile_sort is an executable which will run the sort once for one
-through OMP_NUM_THREADS (environment variable) threads, and produce a
-profile file in the directory m3_profile.  This application uses
-M3_profile.c which is a C code that is compiled separately from the
-sorter_threaded library and which has been borrowed from the M3 cmb
-data analysis package.
 
 If the STL sort on your system is thread safe then compile with
 -DSTL_THREAD_SAFE to use the built in sort as the basic sort.
