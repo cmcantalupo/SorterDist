@@ -104,7 +104,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 }
 
-#pragma omp parallel for schedule (dynamic) num_threads(numThreads)
+#pragma omp parallel for schedule (dynamic) num_threads(numThreads) default(shared)
   for (int i = 0; i < numTasks; ++i) {
     if (i != numTasks - 1) {
 #ifdef STL_SORT_THREAD_SAFE
