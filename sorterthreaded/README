@@ -8,7 +8,8 @@ Brief description
 -----------------
 
 This library contains the class SorterThreaded which has a sort()
-method that uses OpenMP threading.
+method that uses OpenMP threading.  This is a header only template 
+library.  
 
 SorterThreaded class
 --------------------
@@ -41,21 +42,16 @@ Compile options
 ---------------
 
 make all:
-Compiles the library libsorter_threaded.a and profile_sort.  
+Compiles the unit tests M3_profile.o and profile_sort.  
 
 make lib:
-Comiles the library libsorter_threaded.a
+Comiles the unit tests
 
 make profile:
 Compiles M3_profile.o and profile_sort
 
 make clean:
 Removes all the outputs from make
-
-make tidy:
-Removes .o files that comprise libsorter_threaded.a and unit tests.   
-
-libsorter_threaded.a is the main library. 
 
 If the STL sort on your system is thread safe then compile with
 -DSTL_THREAD_SAFE to use the built in sort as the basic sort.
