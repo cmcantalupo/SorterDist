@@ -1,6 +1,6 @@
 CC=g++
 LD=g++
-CPPFLAGS=-O3 -fpic -fopenmp
+CPPFLAGS=-O3 -fpic -fopenmp -DSTL_SORT_THREAD_SAFE
 LDFLAGS=-fopenmp
 
 

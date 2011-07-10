@@ -1,9 +1,10 @@
 #include "sorter_threaded.hpp"
+#include <algorithm>
 #include <assert.h>
 
 
 int main(int argc, char **argv) {
-  size_t testSize = 10000;
+  size_t testSize = 1000000;
   std::vector<double> orderedVector(testSize);
   SorterThreaded st;
   

@@ -10,8 +10,9 @@
 #include "partition.hpp"
 #include "splinter.hpp"
 #include "sorter_threaded_exception.hpp"
+#ifndef STL_SORT_THREAD_SAFE
 #include "quick_sort.hpp"
-
+#endif
 
 void SorterThreaded::sort(std::vector<double>::iterator begin, 
                           std::vector<double>::iterator end) {
@@ -61,7 +62,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
   // Check that there were as many unique values as we need
   if (pivots.size() < numThreads * taskFactor_ - 1) {
-    SorterThreadedHelper::quick_sort(begin, end);
+    std::sort(begin, end);
     return;
   }
   
@@ -106,15 +107,21 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 #pragma omp parallel for schedule (dynamic)
   for (int i = 0; i < numTasks; ++i) {
     if (i != numTasks - 1) {
-      //      SorterThreadedHelper::quick_sort(taskOffsets[i], taskOffsets[i+1]);
+#ifdef STL_SORT_THREAD_SAFE
       std::sort(taskOffsets[i], taskOffsets[i+1]);
+#else
+      SorterThreadedHelper::quick_sort(taskOffsets[i], taskOffsets[i+1]);
+#endif
     }
     else {
-      //      SorterThreadedHelper::quick_sort(taskOffsets[numTasks - 1], end);
+#ifdef STL_SORT_THREAD_SAFE
       std::sort(taskOffsets[numTasks - 1], end);
+#else
+      SorterThreadedHelper::quick_sort(taskOffsets[numTasks - 1], end);
+#endif
     }
   }
-#endif
+#endif //end of #ifdef _OPENMP
 }
 
 SorterThreaded::SorterThreaded(int taskFactor, int maxThreads) :
