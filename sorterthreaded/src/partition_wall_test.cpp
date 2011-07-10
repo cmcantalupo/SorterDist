@@ -3,8 +3,8 @@
 using namespace SorterThreadedHelper;
 
 int main(int argc, char **argv) {
-  PartitionWall pw0(0.0);
-  PartitionWall pw1;
+  PartitionWall<double> pw0(0.0);
+  PartitionWall<double> pw1;
 
   pw1.set(1.0);
   assert(pw0 < pw1);

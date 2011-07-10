@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   random_shuffle(testVector.begin(), testVector.end());
   std::vector<double>::iterator pivIt;
   int piv = 100;
-  pivIt = part(testVector.begin(), testVector.end(), piv);
+  pivIt = part<double>(testVector.begin(), testVector.end(), piv);
 
   for (std::vector<double>::iterator it = testVector.begin();
        it != pivIt; it++) {
@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     assert(*it >= piv);
   }
 
-  quick_sort(testVector.begin(), testVector.end());
+  quick_sort<double>(testVector.begin(), testVector.end());
 
   assert(testVector == orderedVector);
     

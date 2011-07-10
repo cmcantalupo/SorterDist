@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
   }
   random_shuffle(testVec.begin(), testVec.end());
 
-  Partition part(pivots);
+  Partition<double> part(pivots);
   part.fill(testVec.begin(), testVec.end());
   int numTasks = part.numTasks();
   assert(numTasks == numPivots+1);
