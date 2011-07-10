@@ -12,9 +12,16 @@ int main(int argc, char **argv) {
   M3_ProfileInit("sorter_threaded");
 
   size_t testSize = 1000000;
-  std::vector<double> unsortedVector(testSize);
   SorterThreaded st;
   
+  if (argc > 1) {
+    st.setTaskFactor(atoi(argv[1]));
+  }
+  if (argc > 2) {
+    testSize = atoi(argv[2]);
+  }
+  std::vector<double> unsortedVector(testSize);
+
   for (size_t i = 0; i < testSize; i++) {
     unsortedVector[i] = static_cast<double>(i);
   }
