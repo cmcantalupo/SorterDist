@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include "partition_wall.hpp"
-#include "sorter_threaded_exception.hpp"
 
 namespace SorterThreadedHelper {
   // Each thread will have a partition and the members will
@@ -52,7 +51,6 @@ namespace SorterThreadedHelper {
       typename std::map<PartitionWall<type>, std::stack<type>*>::iterator curTaskIt_;
   };
 
-  // definitions follow
 
   template <class type> 
   Partition<type>::Partition(const std::set<type>& pivots) :

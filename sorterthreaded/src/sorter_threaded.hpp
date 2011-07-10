@@ -11,7 +11,6 @@
 #include "sorter_threaded.hpp"
 #include "partition.hpp"
 #include "splinter.hpp"
-#include "sorter_threaded_exception.hpp"
 #ifndef STL_SORT_THREAD_SAFE
 #include "quick_sort.hpp"
 #endif
