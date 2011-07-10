@@ -306,7 +306,7 @@ void M3_profile( int sectionID, const char *sectionName, int operationFlag )
             if( staticNumCalls[i] )
             {
               fprintf(outFile, "-----------------------------\n");
-              fprintf(outFile, "    Profile ID number:  %i\n", i);
+              fprintf(outFile, "    Profile ID number:  %lli\n", i);
               if( staticProfileName[i] )
                 fprintf(outFile, "    %s\n", staticProfileName[i] );
               fprintf(outFile, "      Total number of calls:          %lli\n", staticNumCalls[i]);
