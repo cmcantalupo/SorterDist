@@ -1,7 +1,8 @@
 CC=g++
 LD=g++
-CPPFLAGS=-O3 -g -fpic -fopenmp
+CPPFLAGS=-O3 -fpic -fopenmp
 LDFLAGS=-fopenmp
+
 
 all : partition.o partition_wall.o splinter.o sorter_threaded.o
 
