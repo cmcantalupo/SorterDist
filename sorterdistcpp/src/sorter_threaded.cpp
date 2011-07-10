@@ -10,8 +10,9 @@
 #include "partition.hpp"
 #include "splinter.hpp"
 #include "sorter_threaded_exception.hpp"
-
-using namespace SorterThreadedHelper;
+#ifndef STL_SORT_THREAD_SAFE
+#include "quick_sort.hpp"
+#endif
 
 void SorterThreaded::sort(std::vector<double>::iterator begin, 
                           std::vector<double>::iterator end) {
@@ -39,19 +40,20 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
 #ifndef _OPENMP
   std::sort(begin, end);
 #else
-  int numThreads;
-#pragma omp parallel shared (numThreads)
-{
-  numThreads = omp_get_num_threads();
-}
+  int numThreads = omp_get_max_threads();
+
   if (maxThreads_ != -1 && maxThreads_ < numThreads) {
     numThreads = maxThreads_;
   }
-  std::cout << "numThreads = " << numThreads << "\n";
 
-  size_t numTasks = numThreads * taskFactor_;
+  if (numThreads == 1) {
+    std::sort(begin,end);
+    return;
+  }
+
+  int numTasks = numThreads * taskFactor_;
+
   std::set<double> pivots;
-
   // Create a set of pivots by going through the vector    
   for (std::vector<double>::iterator it = begin;
        it != end && pivots.size() < numThreads*taskFactor_ - 1;
@@ -64,18 +66,17 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
     return;
   }
   
-  Splinter splinter(begin, end);
+  SorterThreadedHelper::Splinter splinter(begin, end, numTasks);
   std::vector<std::vector<double>::iterator> chunks;
 
   splinter.even(numThreads, chunks);
 
   std::vector<std::vector<double>::iterator> taskOffsets(numTasks);
-#pragma omp parallel default (shared) 
+#pragma omp parallel default (shared) num_threads (numThreads)
 {
   int threadID = omp_get_thread_num();
-  Partition partition(pivots);
+  SorterThreadedHelper::Partition partition(pivots);
   partition.fill(chunks[threadID], chunks[threadID+1]);
-#pragma  omp barrier
   std::vector<size_t> mySizes;
   partition.taskSizes(mySizes);
 
@@ -99,28 +100,41 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 
   if (threadID == numThreads - 1) {
-    taskOffsets = offsets;
+    std::copy(offsets.begin(), offsets.end(), taskOffsets.begin());
   }
-#pragma omp barrier
-
-#pragma omp parallel for schedule (dynamic)
-  for (int i = 0; i < numTasks - 1; ++i) {
-    std::sort(taskOffsets[i], taskOffsets[i+1]);
-  }
-#pragma omp critical
-{
-  if (taskOffsets[numTasks-1] != end) {
-    std::sort(taskOffsets[numTasks - 1], end);
-  }
-} //end omp critical region
-} //end omp parallel region
-#endif
 }
 
-SorterThreaded::SorterThreaded(int taskFactor, int numThreads) :
-  taskFactor_(taskFactor), 
-  maxThreads_(numThreads) {}
+#pragma omp parallel for schedule (dynamic) num_threads(numThreads)
+  for (int i = 0; i < numTasks; ++i) {
+    if (i != numTasks - 1) {
+#ifdef STL_SORT_THREAD_SAFE
+      std::sort(taskOffsets[i], taskOffsets[i+1]);
+#else
+      SorterThreadedHelper::quick_sort(taskOffsets[i], taskOffsets[i+1]);
+#endif
+    }
+    else {
+#ifdef STL_SORT_THREAD_SAFE
+      std::sort(taskOffsets[numTasks - 1], end);
+#else
+      SorterThreadedHelper::quick_sort(taskOffsets[numTasks - 1], end);
+#endif
+    }
+  }
+#endif //end of #ifdef _OPENMP
+}
 
+SorterThreaded::SorterThreaded(int taskFactor, int maxThreads) :
+  taskFactor_(taskFactor), 
+  maxThreads_(maxThreads) {}
+
+void SorterThreaded::setMaxThreads(int maxThreads) {
+  maxThreads_ = maxThreads;
+}
+
+void SorterThreaded::setTaskFactor(int taskFactor) {
+  taskFactor_ = taskFactor;
+}
 
                                 
 

@@ -6,13 +6,13 @@
 using namespace SorterThreadedHelper;
 
 int main(int argc, char **argv) {
-  int testSize = 18;
+  int testSize = 100000;
   std::vector<double> testVec(testSize);
   for (int i = 0; i < testSize; ++i) {
     testVec[i] = i;
   }
   random_shuffle(testVec.begin(), testVec.end());
-  int numPivots = 2;
+  int numPivots = 4;
   std::set<double> pivots;
   for (int i = 0; i < numPivots; i++) {
     pivots.insert(testVec[i]);

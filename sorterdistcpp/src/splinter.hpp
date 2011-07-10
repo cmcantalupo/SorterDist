@@ -6,7 +6,7 @@ namespace SorterThreadedHelper {
   class Splinter {
     public:
       Splinter(std::vector<double>::iterator begin, 
-               std::vector<double>::iterator end);
+               std::vector<double>::iterator end, int numTasks);
       void even(size_t num, std::vector<std::vector<double>::iterator>& chunks);
       void addSizes(const std::vector<size_t>& sizes);
       void getOffsets(const std::vector<size_t>& sizes, 

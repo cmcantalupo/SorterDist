@@ -2,8 +2,9 @@
 #include <algorithm>
 #include <assert.h>
 
+
 int main(int argc, char **argv) {
-  size_t testSize = 1000;
+  size_t testSize = 1000000;
   std::vector<double> orderedVector(testSize);
   SorterThreaded st;
   
@@ -13,9 +14,9 @@ int main(int argc, char **argv) {
   std::vector<double> testVector(orderedVector);
 
   random_shuffle(testVector.begin(), testVector.end());
-  
+
   st.sort(testVector.begin(), testVector.end());
-  
+
   assert(testVector == orderedVector);
-    
+
 }
