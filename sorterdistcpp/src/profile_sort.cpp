@@ -15,10 +15,10 @@ int main(int argc, char **argv) {
   SorterThreaded st;
   
   if (argc > 1) {
-    st.setTaskFactor(atoi(argv[1]));
+    testSize = atoi(argv[1]);
   }
   if (argc > 2) {
-    testSize = atoi(argv[2]);
+    st.setTaskFactor(atoi(argv[2]));
   }
   std::vector<double> unsortedVector(testSize);
 
@@ -31,14 +31,12 @@ int main(int argc, char **argv) {
 
   int numThreads = omp_get_max_threads();
   std::stringstream profileStream;
-  std::string profileString;
 
   for (int i = 1; i <= numThreads; i++) {
     st.setMaxThreads(i);
     profileStream.str("");
     profileStream << "num threads = " << i;
-    profileString = profileStream.str();
-    M3_ProfileStart(i, profileString.c_str());
+    M3_ProfileStart(i, profileStream.str().c_str());
     st.sort(testVector.begin(), testVector.end());
     M3_ProfileStop(i);
     testVector = unsortedVector;
