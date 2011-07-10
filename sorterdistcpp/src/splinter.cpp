@@ -31,14 +31,16 @@ namespace SorterThreadedHelper {
     
   void Splinter::getOffsets(const std::vector<size_t>& sizes, 
                             std::vector<std::vector<double>::iterator>& chunks) {
-    // throw if sizes chunks and partitionEnds_ are not all the same size
+    if (sizes.size() != partitionEnds_.size()) {
+      throw(SorterThreadedException::SplinterSize);
+    }
+
     if (switchedOff_ == false) {
       for (size_t i = 1; i < partitionEnds_.size(); ++i) {
 	partitionEnds_[i] += partitionEnds_[i-1];
       }
       switchedOff_ = true;
     }
-
     size_t n = partitionEnds_.size();
     chunks.resize(n);
     for (size_t i = 0; i < n; ++i) {
