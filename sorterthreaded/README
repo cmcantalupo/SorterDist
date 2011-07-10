@@ -1,0 +1,58 @@
+------------------
++ sorterthreaded +
+------------------
+
+A C++ library for doing a threaded sort.  
+
+Brief description
+-----------------
+
+This library contains the class SorterThreaded which has a sort()
+method that uses OpenMP threading.
+
+SorterThreaded class
+--------------------
+
+Basic usage is with default options for the constructor.  The sort()
+method takes an iterator to the beginning and end of the vector to be
+sorted.
+
+You optionally specify the maximum number of threads with the first
+constructor argument.  The default for this option is -1 which will
+use the OpenMP environment to determine the number of threads.  The
+second optional constructor argument is the "taskFactor" which
+determines how many threaded tasks the sort will be broken up into.
+The number of tasks is taskFactor times the number of threads.  The
+default for taskFactor is 8.
+
+Compile options
+---------------
+
+make all:
+Compiles the library libsorter_threaded.a and profile_sort.  
+
+make lib:
+Comiles the library libsorter_threaded.a
+
+make profile:
+Compiles M3_profile.o and profile_sort
+
+make clean:
+Removes all the outputs from make
+
+make tidy:
+Removes .o files that comprise libsorter_threaded.a and unit tests.   
+
+libsorter_threaded.a is the main library. 
+
+profile_sort is an executable which will run the sort once for one
+through OMP_NUM_THREADS (environment variable) threads, and produce a
+profile file in the directory m3_profile.  This application uses
+M3_profile.c which is a C code that is compiled separately from the
+sorter_threaded library and which has been borrowed from the M3 cmb
+data analysis package.
+
+If the STL sort on your system is thread safe then compile with
+-DSTL_THREAD_SAFE to use the built in sort as the basic sort.
+Otherwise a thread safe quick sort is implemented and will be used.
+
