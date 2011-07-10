@@ -10,10 +10,10 @@ lib : partition.o partition_wall.o  splinter.o quick_sort.o sorter_threaded.o li
 profile : profile_sort M3_profile.o
 
 clean :
-	rm -f partition.o partition_wall.o partition_wall_test.o partition_wall_test partition_test.o partition_test splinter.o splinter_test.o splinter_test quick_sort.o quick_sort_test.o quick_sort_test sorter_threaded.o sorter_threaded_test.o sorter_threaded_test M3_profile.o libsorter_threaded.a profile_sort.o profile_sort
+	rm -f partition.o partition_wall.o partition_wall_test.o partition_wall_test partition_test.o partition_test splinter.o splinter_test.o splinter_test quick_sort.o quick_sort_test.o quick_sort_test sorter_threaded.o sorter_threaded_test.o sorter_threaded_test M3_profile.o libsorter_threaded.a profile_sort.o profile_sort m3_profile
 
 tidy :
-	rm -f partition.o partition_wall.o partition_wall_test.o partition_wall_test partition_test.o partition_test splinter.o splinter_test.o splinter_test quick_sort.o quick_sort_test.o quick_sort_test sorter_threaded.o sorter_threaded_test.o sorter_threaded_test profile_sort.o
+	rm -rf partition.o partition_wall.o partition_wall_test.o partition_wall_test partition_test.o partition_test splinter.o splinter_test.o splinter_test quick_sort.o quick_sort_test.o quick_sort_test sorter_threaded.o sorter_threaded_test.o sorter_threaded_test profile_sort.o m3_profile
 
 partition_wall.o : src/partition_wall.cpp src/partition_wall.hpp src/sorter_threaded_exception.hpp src/partition_wall_test.cpp
 	${CC} ${CPPFLAGS} -c src/partition_wall.cpp
@@ -50,5 +50,6 @@ M3_profile.o : src/M3_profile.c src/M3_profile.h
 profile_sort : libsorter_threaded.a M3_profile.o
 	${CC} ${CPPFLAGS} -c src/profile_sort.cpp 
 	${LD} ${LDFLAGS} src/profile_sort.cpp -L./ -lsorter_threaded M3_profile.o -o profile_sort
+	./profile_sort
 
 #
