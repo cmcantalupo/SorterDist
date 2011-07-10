@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
   M3_ProfileInit("sorter_threaded");
 
   size_t testSize = 1000000;
-  SorterThreaded st;
+  SorterThreaded<double> st;
   
   if (argc > 1) {
     testSize = atoi(argv[1]);
