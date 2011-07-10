@@ -72,7 +72,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   splinter.even(numThreads, chunks);
 
   std::vector<std::vector<double>::iterator> taskOffsets(numTasks);
-#pragma omp parallel default (shared) 
+#pragma omp parallel default (shared) num_threads (numThreads)
 {
   int threadID = omp_get_thread_num();
   SorterThreadedHelper::Partition partition(pivots);
@@ -104,7 +104,7 @@ void SorterThreaded::sort(std::vector<double>::iterator begin,
   }
 }
 
-#pragma omp parallel for schedule (dynamic)
+#pragma omp parallel for schedule (dynamic) num_threads(numThreads)
   for (int i = 0; i < numTasks; ++i) {
     if (i != numTasks - 1) {
 #ifdef STL_SORT_THREAD_SAFE
