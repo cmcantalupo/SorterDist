@@ -3,7 +3,9 @@ LD=g++
 CPPFLAGS=-O3 -fpic -fopenmp -DSTL_SORT_THREAD_SAFE
 LDFLAGS=-fopenmp
 
-all : partition_wall_test partition_test splinter_test quick_sort_test sorter_threaded_test 
+all : lib profile
+
+lib : partition_wall_test partition_test splinter_test quick_sort_test sorter_threaded_test 
 
 profile : profile_sort M3_profile.o
 
