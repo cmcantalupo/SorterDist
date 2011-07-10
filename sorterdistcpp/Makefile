@@ -1,6 +1,6 @@
 CC=g++
 LD=g++
-CPPFLAGS=-O3 -fpic -fopenmp -DSTL_SORT_THREAD_SAFE
+CPPFLAGS=-O3 -fpic -fopenmp -DSTL_SORT_THREAD_SAFE -DPROFILE_STT
 LDFLAGS=-fopenmp
 
 
@@ -31,11 +31,12 @@ quick_sort.o : src/quick_sort.cpp src/quick_sort.hpp
 	${CC} ${CPPFLAGS} -c src/quick_sort_test.cpp
 	${LD} ${LDFLAGS} quick_sort_test.o quick_sort.o -o quick_sort_test
 	./quick_sort_test
-
-sorter_threaded.o : partition.o partition_wall.o splinter.o quick_sort.o src/sorter_threaded.cpp src/sorter_threaded.hpp src/sorter_threaded_exception.hpp src/sorter_threaded_test.cpp
+M3_profile.o : src/M3_profile.c src/M3_profile.h
+	${CC} ${CPPFLAGS} -c src/M3_profile.c
+sorter_threaded.o : partition.o partition_wall.o splinter.o quick_sort.o M3_profile.o src/sorter_threaded.cpp src/sorter_threaded.hpp src/sorter_threaded_exception.hpp src/sorter_threaded_test.cpp
 	${CC} ${CPPFLAGS} -c src/sorter_threaded.cpp
 	${CC} ${CPPFLAGS} -c src/sorter_threaded_test.cpp
-	${LD} ${LDFLAGS} sorter_threaded_test.o sorter_threaded.o splinter.o partition_wall.o partition.o quick_sort.o -o sorter_threaded_test
+	${LD} ${LDFLAGS} sorter_threaded_test.o sorter_threaded.o splinter.o partition_wall.o partition.o quick_sort.o M3_profile.o -o sorter_threaded_test
 	./sorter_threaded_test
 
 
