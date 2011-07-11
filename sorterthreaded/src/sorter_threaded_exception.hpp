@@ -1,3 +1,8 @@
+// Exception class for SorterThreaded.  
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #ifndef sorter_threaded_exception_hpp
 #define sorter_threaded_exception_hpp
 

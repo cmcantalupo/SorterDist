@@ -1,3 +1,7 @@
+// Unit test for quick_sort function.  
+//
+// C.M. Cantalupo 2011
+
 #include "quick_sort.hpp"
 #include <vector>
 #include <algorithm>

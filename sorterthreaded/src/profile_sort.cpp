@@ -1,3 +1,8 @@
+// Application that profiles SorterThreaded::sort().  
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #ifdef _OPENMP
 #include "sorter_threaded.hpp"
 #include <algorithm>

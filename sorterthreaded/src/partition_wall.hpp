@@ -1,3 +1,10 @@
+// Class used in partition map.  It wraps the type of the vector to be
+// sorted with a bool value that determines if the partition is after
+// the last pivot or not.
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #ifndef st_partition_wall_hpp
 #define st_partition_wall_hpp
 
@@ -19,8 +26,6 @@ namespace SorterThreadedHelper {
       type pivot_;
   };
 
-  // Definitions follow
-
   template <class type>
   PartitionWall<type>::PartitionWall(const type& pivot, const bool &isEnd) :
     pivot_(pivot), isEnd_(isEnd) {}
@@ -34,7 +39,7 @@ namespace SorterThreadedHelper {
                   const PartitionWall<type>& r) {
     if (l.isEnd_) return false;
     if (r.isEnd_) return true;
-    else return l.pivot_ < r.pivot_;     
+    return l.pivot_ < r.pivot_;     
   }
 
   template <class type>

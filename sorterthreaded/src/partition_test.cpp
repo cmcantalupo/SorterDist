@@ -1,3 +1,8 @@
+// Unit test for the Partition class.  
+// 
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #include <iostream>
 #include <algorithm>
 #include <assert.h>

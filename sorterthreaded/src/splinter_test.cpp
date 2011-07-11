@@ -1,3 +1,8 @@
+// Unit test for the SorterThreadedHelper::Splinter class.
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #include "splinter.hpp"
 #include "assert.h"
 

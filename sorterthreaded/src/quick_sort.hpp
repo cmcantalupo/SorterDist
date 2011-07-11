@@ -1,3 +1,9 @@
+// Quick sort implementation that can be used if built in std::sort()
+// is not thread safe.
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #ifndef quick_sort_hpp
 #define quick_sort_hpp
 #include <vector>
@@ -22,6 +28,7 @@ namespace SorterThreadedHelper {
   part(typename std::vector<type>::iterator begin, 
        typename std::vector<type>::iterator end, type value) {
     // cribbed from the explaination of STL partition
+    // http://www.cplusplus.com/reference/algorithm/partition/
     while (true) {
       while (begin != end && *begin < value) ++begin;
       if (begin == end--) break;
@@ -32,7 +39,7 @@ namespace SorterThreadedHelper {
     return begin;
   }
 
-  // not sure if STL copy is thread safe
+  // Just in case STL copy is not thread safe.  
   template <class type>
   void ts_copy(typename std::vector<type>::iterator begin, 
                typename std::vector<type>::iterator end,
@@ -44,7 +51,7 @@ namespace SorterThreadedHelper {
     }
   }
 
-  // STL sort is not thread safe, so we need to roll our own
+  // If STL sort is not thread safe this can be used instead.  
   template <class type>
   void quick_sort(typename std::vector<type>::iterator begin, 
                   typename std::vector<type>::iterator end) {

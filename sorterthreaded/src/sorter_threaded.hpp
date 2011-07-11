@@ -1,3 +1,17 @@
+// SorterThreaded class.  Has a sort() member function that will use
+// OpenMP threading to sort a vector.  The taskFactor determines the
+// number of tasks that the problem will be broken up into, where the
+// number of tasks is the number of threads times the task factor.
+// The number of threads used can be lowered from the
+// omp_get_max_threads by setting maxThreads to a value other than -1.
+// The scaling of the partitioning step is O(numEl*log(numTasks)) in
+// time and the the sort algorithm is then called on each task.  The
+// built in std::sort() is used if STL_SORT_THREAD_SAFE is defined,
+// otherwise a thread safe quick_sort is used.
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #ifndef st_sorter_threaded_hpp
 #define st_sorter_threaded_hpp
 
@@ -25,26 +39,21 @@ class SorterThreaded {
     void setMaxThreads(int maxThreads);
   private:
     int taskFactor_;
-    // If numThreads_ == -1 then omp_max_num_threads will be used
+    // If numThreads_ == -1 then omp_get_max_threads will be used
     int maxThreads_;
 };
-
 
   // We need to break the input vector into nearly equal size chunks
   // for partitioning.  One chunk for each thread. 
   //
-  // We can builid up a Partition from an array of non-repeating 
+  // We can build up a Partition from an array of non-repeating 
   // values (pivots) from the input vector.  
   //
-  // Each thread will have and make its own Partition.  These will be
-  // OpenMP private.  Each partition has a stack for each thread and
-  // each task.  This implies that the total number of stacks over all
-  // threads is numThreads^3 * taskFactor_.
-  //
-  // The threads will be managed by the PartitionGang.  This class
-  // will hold all of the Partitions and will be the class to 
-  // spawn threads.  
-  //
+  // Each thread makes its own Partition.  These are OpenMP private.
+  // Each partition has a stack for each thread and each task.  This
+  // implies that the total number of stacks over all threads is
+  // numThreads^3 * taskFactor_.
+ 
 
 template <class type>
 void SorterThreaded<type>::sort(typename std::vector<type>::iterator begin, 
@@ -54,31 +63,31 @@ void SorterThreaded<type>::sort(typename std::vector<type>::iterator begin,
   // in the vector.  The number of pivots will determine the number of 
   // tasks to be done: one more task than the number of pivots. 
   //
-  // For simplicity here we will choose the number of tasks to be 
-  // a factor of the number of threads.  This will be determined 
-  // by the class attribute taskFactor_.  
+  // For simplicity here the number of tasks is chosen to be a factor
+  // of the number of threads.  This is determined by the class
+  // attribute taskFactor_.
   //
   // We need to break down the main scaling dimension of the problem,
   // the length of the input vector.  The first thing that we want to
   // do with the input is to partition it into intervals bounded by
-  // the pivots.  This can be done with the std::set.upper_bound() to
-  // partition the input vector.  In the end we want taskFactor_ times
-  // the number of threads jobs and we need one fewer pivot than that
-  // to do so.  Bundle up the pivots with a stack and put them in a
-  // std::set along with a dummy pivot for the end.  We will
-  // call this class "PartitionWall." The set provides a upper_bound
-  // bound function so we need to overload less than.
-  // 
-
+  // the pivots.  This is done with the std::map.upper_bound().  In
+  // the end we want taskFactor_ times the number of threads jobs and
+  // we need one fewer pivot than that to do so.  Map the intervals to
+  // a stack with a std::map.
+ 
+  // If there is no OpenMP just use std::sort()
 #ifndef _OPENMP
   std::sort(begin, end);
 #else
+  // Get the number of threads and reset it if the attribute
+  // maxThreads_ is smaller
   int numThreads = omp_get_max_threads();
 
   if (maxThreads_ != -1 && maxThreads_ < numThreads) {
     numThreads = maxThreads_;
   }
 
+  // If there is just one thread use std::sort()
   if (numThreads == 1) {
     std::sort(begin,end);
     return;
@@ -93,26 +102,34 @@ void SorterThreaded<type>::sort(typename std::vector<type>::iterator begin,
        ++it) {
       pivots.insert(*it);
   }
-  // Check that there were as many unique values as we need
+  // Check that there were as many unique values as we need otherwise
+  // use std::sort()
   if (pivots.size() < numThreads * taskFactor_ - 1) {
     std::sort(begin, end);
     return;
   }
   
+  // Break the input vector into evenly sized chunks.  
   SorterThreadedHelper::Splinter<type> splinter(begin, end, numTasks);
   std::vector<typename std::vector<type>::iterator> chunks;
-
   splinter.even(numThreads, chunks);
 
+  // taskOffsets is a shared variable, so declare it outside of the
+  // omp parallel region
   std::vector<typename std::vector<type>::iterator> taskOffsets(numTasks);
+
+  //This parallel region is for the partition step.  
 #pragma omp parallel default (shared) num_threads (numThreads)
 {
   int threadID = omp_get_thread_num();
   SorterThreadedHelper::Partition<type> partition(pivots);
+  // Fill each thread's partition with a chunk of the vector.  
   partition.fill(chunks[threadID], chunks[threadID+1]);
+
   std::vector<size_t> mySizes;
   partition.taskSizes(mySizes);
 
+  // Register each thread's partition sizes with Splinter
   for (int i = 0; i < numThreads; ++i) {
     if (i == threadID) {
       splinter.addSizes(mySizes);
@@ -120,6 +137,8 @@ void SorterThreaded<type>::sort(typename std::vector<type>::iterator begin,
 #pragma omp barrier
   }
 
+  // Get the position to dump each thread's tasks back into the
+  // vector.
   std::vector<typename std::vector<type>::iterator> offsets;
   for (int i = 0; i < numThreads; ++i) {
     if (i == threadID) {
@@ -128,15 +147,19 @@ void SorterThreaded<type>::sort(typename std::vector<type>::iterator begin,
 #pragma omp barrier
   }
   
+  // Refill the input vector with the partitioned values.  
   for (int i = 0; i < numTasks; ++i) {
     partition.popTask(offsets[i]);
   }
 
+  // The last thread's offsets define the beginning of the partition so
+  // copy them into the shared vector taskOffsets().
   if (threadID == numThreads - 1) {
     std::copy(offsets.begin(), offsets.end(), taskOffsets.begin());
   }
 }
 
+  // This parallel region is for sorting the partitioned intervals.  
 #pragma omp parallel for schedule (dynamic) num_threads(numThreads) default(shared)
   for (int i = 0; i < numTasks; ++i) {
     if (i != numTasks - 1) {

@@ -1,3 +1,10 @@
+// Partition is a class used to break up a vector into pieces that are
+// between pivot values.  This is done using std::map and each piece
+// is stored in a std::stack.
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #ifndef st_partition_hpp
 #define st_partition_hpp
 

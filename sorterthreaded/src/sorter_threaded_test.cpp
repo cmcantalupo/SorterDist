@@ -1,3 +1,10 @@
+// Unit test for SorterThreaded class.  Should be run with the
+// environment variable OMP_NUM_THREADS set to a value greater than
+// one.  
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #include "sorter_threaded.hpp"
 #include <algorithm>
 #include <assert.h>

@@ -1,3 +1,8 @@
+// Unit test for PartitionWall class.  
+//
+// C.M. Cantalupo 2011
+// cmcantalupo@gmail.com
+
 #include "partition_wall.hpp"
 #include "assert.h"
 using namespace SorterThreadedHelper;
