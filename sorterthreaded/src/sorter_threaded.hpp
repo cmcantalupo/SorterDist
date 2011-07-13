@@ -22,7 +22,6 @@
 #include <omp.h>
 #include <iostream>
 #endif
-#include "sorter_threaded.hpp"
 #include "partition.hpp"
 #include "splinter.hpp"
 #ifndef STL_SORT_THREAD_SAFE
